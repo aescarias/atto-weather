@@ -1,0 +1,143 @@
+[self]
+language = "Español"
+
+[app]
+location_input_placeholder = "Introducir nombre de ciudad, código postal, lat/lon o dirección IP"
+find_button = "Buscar"
+powered_by = "Datos proveídos por <a href='https://www.weatherapi.com'>WeatherAPI.com</a>" # "Powered by" does not translate well literally 
+settings = "Configuración"
+weather_fetch_error = "No se pudo obtener el estado del tiempo"
+creds_required = "Credenciales necesarias"
+creds_required_details = "Bienvenido a Atto Weather! Para acceder al estado del tiempo, utilizamos los servicios de <a href='https://www.weatherapi.com/'>WeatherAPI</a> para el cual se requiere una clave de API.<br><br>Por favor, cree una cuenta y copie el 'API key' desde Dashboard al campo siguiente."
+enter_api_key = "Copie o introduzca su clave de API"
+confirm = "Confirmar"
+yes = "Sí"
+no = "No"
+current_weather = "Tiempo"
+forecast = "Previsión"
+average = "Promedio"
+
+[point16]
+north = "Norte"
+east = "Este"
+south = "Sur"
+west = "Oeste"
+northeast = "Noreste"
+southeast = "Sureste"
+southwest = "Suroeste"
+northwest = "Noroeste"
+north_northeast = "Norte-noroeste"
+east_northeast = "Este-noreste"
+east_southeast = "Este-sureste"
+south_southeast = "Sur-sureste"
+south_southwest = "Sur-suroeste"
+west_southwest = "Oeste-suroeste"
+west_northwest = "Oeste-noroeste"
+north_northwest = "Norte-noroeste"
+
+[weather]
+feels_like = "Sensación térmica"
+windchill = "Sensación térmica acorde al viento"
+heat_index = "Índice de calor"
+dew_point = "Punto de rocío"
+wind_speed = "Velocidad del viento"
+wind_gust = "Velocidad de ráfaga"
+humidity = "Humedad"
+precipitation = "Precipitación"
+pressure = "Presión"
+visibility = "Visibilidad"
+
+[weather.cloud_cover]
+label = "Nubosidad"
+overcast = "Nublado"
+broken_clouds = "Parcialmente nublado" # "broken" and "scattered" clouds are identical in Spanish so this is a best-case compromise
+scattered_clouds = "Nubes dispersas"
+few_clouds = "Pocas nubes"
+clear = "Despejado"
+
+[weather.uv_index]
+label = "Índice de UV"
+low = "Bajo"
+moderate = "Moderado"
+high = "Alto"
+very_high = "Muy alto"
+extreme = "Extremo"
+
+[forecast]
+min_max_temp = "Temperatura mínima/máxima"
+max_wind = "Velocidad máxima del viento"
+snowfall = "Cantidad de nieve" # compromise, again
+avg_visibility = "Visibilidad promedia"
+will_it_rain = "¿Lloverá?"
+will_it_rain_template = "{value} ({chance}% probabilidad de lluvia)"
+will_it_snow = "¿Nevará?"
+will_it_snow_template = "{value} ({chance}% probabilidad de nieve)"
+
+[air_quality]
+label = "Calidad del aire"
+co = "CO (Monóxido de carbono)"
+o3 = "O₃ (Ozono)"
+no2 = "NO₂ (Dioxido de nitrogeno)"
+so2 = "SO₂ (Dioxido de azufre)"
+pm2_5 = "PM2.5"
+pm10 = "PM10"
+
+[air_quality.epa]
+label = "Índice US EPA"
+good = "Bueno"
+moderate = "Moderado"
+unhealthy_sensitive = "Poco saludable para grupos sensibles"
+unhealthy = "Poco saludable"
+very_unhealthy = "No saludable" # compromise
+hazardous = "Peligroso"
+
+[air_quality.defra]
+label = "Índice UK DEFRA"
+low = "Bajo"
+moderate = "Moderado"
+high = "Alto"
+very_high = "Muy alto"
+
+[astronomy]
+label = "Astronomia"
+sunrise = "Amanacer"
+sunset = "Atardecer"
+moonrise = "Salida de la luna"
+moonset = "Puesta de la luna"
+moon_illumination = "Iluminación de la luna"
+
+[astronomy.moon_phase]
+label = "Fase lunar"
+new_moon = "Luna Nueva"
+waxing_crescent = "Luna Creciente"
+first_quarter = "Cuarto Creciente"
+waxing_gibbous = "Gibosa Creciente"
+full_moon = "Luna Llena"
+waning_gibbous = "Gibosa Menguante"
+last_quarter = "Cuarto Menguante"
+waning_crescent = "Luna Menguante"
+
+[settings]
+round_temp_values = "Redondear valores de temperatura al entero más cercano"
+weather_api_key = "Clave de WeatherAPI"
+language = "Idioma"
+
+[settings.temperature]
+label = "Temperatura"
+celsius = "Celsius (°C)"
+fahrenheit = "Fahrenheit (°F)"
+
+[settings.distance]
+label = "Distancia"
+kilometers = "Kilometros (km; km/h)"
+miles = "Millas (mi; mi/h)"
+
+[settings.pressure]
+label = "Presión"
+millibars = "Milibares (mbar)"
+inhg = "Pulgadas de mercurio (inHg)"
+
+[settings.height]
+label = "Altura"
+millimeters = "Milimetros (mm)"
+inches = "Pulgadas (in)"

@@ -1,0 +1,17 @@
+[project]
+name = "atto-weather"
+description = "A weather app using PySide6"
+version = "0.1.0"
+dependencies = [
+    "PySide6>=6.7.0",
+    "httpx>=0.27.0",
+    "tomli>=2.0.0",
+    "typing-extensions>=4.11.0"
+]
+
+[tool.isort]
+line_length = 90
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

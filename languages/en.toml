@@ -1,0 +1,143 @@
+[self]
+language = "English"
+
+[app]
+location_input_placeholder = "Enter city name, postal code, lat/lon, or IP address"
+find_button = "Find"
+powered_by = "Powered by <a href='https://www.weatherapi.com'>WeatherAPI.com</a>"
+settings = "Settings"
+weather_fetch_error = "Could not get weather data"
+creds_required = "Credentials required"
+creds_required_details = "Welcome to Atto Weather! To access weather data, we use <a href='https://www.weatherapi.com/'>WeatherAPI</a> for which you require an API key.<br><br>Please create an account and copy the 'API key' from the Dashboard into the field below."
+enter_api_key = "Copy or enter your API key here"
+confirm = "Confirm"
+yes = "Yes"
+no = "No"
+current_weather = "Current"
+forecast = "Forecast"
+average = "Average"
+
+[point16]
+north = "North"
+east = "East"
+south = "South"
+west = "West"
+northeast = "Northeast"
+southeast = "Southeast"
+southwest = "Southwest"
+northwest = "Northwest"
+north_northeast = "North-northeast"
+east_northeast = "East-northeast"
+east_southeast = "East-southeast"
+south_southeast = "South-southeast"
+south_southwest = "South-southwest"
+west_southwest = "West-southwest"
+west_northwest = "West-northwest"
+north_northwest = "North-northwest"
+
+[weather]
+feels_like = "Feels Like"
+windchill = "Windchill"
+heat_index = "Heat Index"
+dew_point = "Dew Point"
+wind_speed = "Wind Speed"
+wind_gust = "Wind Gust"
+humidity = "Humidity"
+precipitation = "Precipitation"
+pressure = "Pressure"
+visibility = "Visibility"
+
+[weather.cloud_cover]
+label = "Cloud Cover"
+overcast = "Overcast"
+broken_clouds = "Broken clouds"
+scattered_clouds = "Scattered clouds"
+few_clouds = "Few clouds"
+clear = "Clear"
+
+[weather.uv_index]
+label = "UV Index"
+low = "Low"
+moderate = "Moderate"
+high = "High"
+very_high = "Very High"
+extreme = "Extreme"
+
+[forecast]
+min_max_temp = "Minimum/Maximum Temperature"
+max_wind = "Maximum Wind Speed"
+snowfall = "Snowfall"
+avg_visibility = "Average Visibility"
+will_it_rain = "Will it rain?"
+will_it_rain_template = "{value} ({chance}% chance of rain)"
+will_it_snow = "Will it snow?"
+will_it_snow_template = "{value} ({chance}% chance of snow)"
+
+[air_quality]
+label = "Air Quality"
+co = "CO (Carbon Monoxide)"
+o3 = "O₃ (Ozone)"
+no2 = "NO₂ (Nitrogen Dioxide)"
+so2 = "SO₂ (Sulphur Dioxide)"
+pm2_5 = "PM2.5"
+pm10 = "PM10"
+
+[air_quality.epa]
+label = "US EPA Index"
+good = "Good"
+moderate = "Moderate"
+unhealthy_sensitive = "Unhealthy for Sensitive Groups"
+unhealthy = "Unhealthy"
+very_unhealthy = "Very Unhealthy"
+hazardous = "Hazardous"
+
+[air_quality.defra]
+label = "UK DEFRA Index"
+low = "Low"
+moderate = "Moderate"
+high = "High"
+very_high = "Very High"
+
+[astronomy]
+label = "Astronomy"
+sunrise = "Sunrise"
+sunset = "Sunset"
+moonrise = "Moonrise"
+moonset = "Moonset"
+moon_illumination = "Moon Illumination"
+
+[astronomy.moon_phase]
+label = "Moon Phase"
+new_moon = "New Moon"
+waxing_crescent = "Waxing Crescent"
+first_quarter = "First Quarter"
+waxing_gibbous = "Waxing Gibbous"
+full_moon = "Full Moon"
+waning_gibbous = "Waning Gibbous"
+last_quarter = "Last Quarter"
+waning_crescent = "Waning Crescent"
+
+[settings]
+round_temp_values = "Round temperature values to nearest whole number"
+weather_api_key = "WeatherAPI key"
+language = "Language"
+
+[settings.temperature]
+label = "Temperature"
+celsius = "Celsius (°C)"
+fahrenheit = "Fahrenheit (°F)"
+
+[settings.distance]
+label = "Distance"
+kilometers = "Kilometers (km; km/h)"
+miles = "Miles (mi; mi/h)"
+
+[settings.pressure]
+label = "Pressure"
+millibars = "Millibars (mbar)"
+inhg = "Inches of mercury (inHg)"
+
+[settings.height]
+label = "Height"
+millimeters = "Millimeters (mm)"
+inches = "Inches (in)"
