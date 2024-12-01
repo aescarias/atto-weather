@@ -16,7 +16,7 @@ def estimate_cloud_cover(cover: int) -> str:
         return lo("weather.cloud_cover.broken_clouds")
     elif tenths == 10:
         return lo("weather.cloud_cover.overcast")
-    
+
     raise ValueError("Cloud cover out of range")
 
 
@@ -31,7 +31,7 @@ def get_defra_index(index: int) -> str:
         typ_ = lo("air_quality.defra.very_high")
     else:
         raise ValueError("DEFRA index out of range")
-    
+
     return f"{typ_} ({UK_DEFRA_BANDS[index]})"
 
 
@@ -46,9 +46,10 @@ def estimate_uv_index(index: int) -> str:
         return lo("weather.uv_index.very_high")
     elif index == 11:
         return lo("weather.uv_index.extreme")
-    
+
     raise ValueError("UV index out of range")
-    
+
+
 # shorthand -> lo. identifier
 POINT16_COMPASS = {
     "N": "point16.north",
@@ -66,169 +67,121 @@ POINT16_COMPASS = {
     "SSW": "point16.south_southwest",
     "WSW": "point16.west_southwest",
     "WNW": "point16.west_northwest",
-    "NNW": "point16.north_northwest"
+    "NNW": "point16.north_northwest",
 }
 
 CURRENT_WEATHER_FIELDS: Mapping[str, WeatherField] = {
     "feels_like": {
         "label": "weather.feels_like",
-        "template": { "value": "{value}°{unit}" }
+        "template": {"value": "{value}°{unit}"},
     },
     "windchill": {
         "label": "weather.windchill",
-        "template": { "value": "{value}°{unit}" }
+        "template": {"value": "{value}°{unit}"},
     },
     "heat_index": {
         "label": "weather.heat_index",
-        "template": { "value": "{value}°{unit}" },
+        "template": {"value": "{value}°{unit}"},
     },
     "dew_point": {
         "label": "weather.dew_point",
-        "template": { "value": "{value}°{unit}" }
+        "template": {"value": "{value}°{unit}"},
     },
     "wind_speed": {
         "label": "weather.wind_speed",
-        "template": { "value": "{speed}{unit} @ {degree}° {direction} ({dir_short})" }
+        "template": {"value": "{speed}{unit} @ {degree}° {direction} ({dir_short})"},
     },
-    "wind_gust": {
-        "label": "weather.wind_gust",
-        "template": { "value": "{speed}{unit}" }
-    },
-    "humidity": {
-        "label": "weather.humidity",
-        "template": { "value": "{value}%" }
-    },
+    "wind_gust": {"label": "weather.wind_gust", "template": {"value": "{speed}{unit}"}},
+    "humidity": {"label": "weather.humidity", "template": {"value": "{value}%"}},
     "precipitation": {
         "label": "weather.precipitation",
-        "template": { "value": "{height}{unit}" }
+        "template": {"value": "{height}{unit}"},
     },
     "pressure": {
         "label": "weather.pressure",
-        "template": { "value": "{pressure}{unit}" }
+        "template": {"value": "{pressure}{unit}"},
     },
     "cloud_cover": {
         "label": "weather.cloud_cover.label",
-        "template": { "value": "{value}% ({summary})" }
+        "template": {"value": "{value}% ({summary})"},
     },
     "visibility": {
         "label": "weather.visibility",
-        "template": { "value": "{distance}{unit}" }
+        "template": {"value": "{distance}{unit}"},
     },
     "uv_index": {
         "label": "weather.uv_index.label",
-        "template": { "value": "{value} ({summary})" }
+        "template": {"value": "{value} ({summary})"},
     },
-    "air_quality": {
-        "label": "air_quality.label",
-        "template": { "value": "{summary}" }
-    }
+    "air_quality": {"label": "air_quality.label", "template": {"value": "{summary}"}},
 }
 
 AIR_QUALITY_FIELDS: Mapping[str, WeatherField] = {
-    "co": {
-        "label": "air_quality.co",
-        "template": { "value": "{value} μg/m³" }
-    },
-    "o3": {
-        "label": "air_quality.o3",
-        "template": { "value": "{value} μg/m³" }
-    },
-    "no2": {
-        "label": "air_quality.no2",
-        "template": { "value": "{value} μg/m³" }
-    },
-    "so2": {
-        "label": "air_quality.so2",
-        "template": { "value": "{value} μg/m³" }
-    },
-    "pm2.5": {
-        "label": "air_quality.pm2_5",
-        "template": { "value": "{value} μg/m³" }
-    },
-    "pm10": {
-        "label": "air_quality.pm10",
-        "template": { "value": "{value} μg/m³" }
-    },
-    "epa": {
-        "label": "air_quality.epa.label",
-        "template": { "value": "{summary}" }
-    },
-    "defra": {
-        "label": "air_quality.defra.label",
-        "template": { "value": "{summary}" }
-    }
+    "co": {"label": "air_quality.co", "template": {"value": "{value} μg/m³"}},
+    "o3": {"label": "air_quality.o3", "template": {"value": "{value} μg/m³"}},
+    "no2": {"label": "air_quality.no2", "template": {"value": "{value} μg/m³"}},
+    "so2": {"label": "air_quality.so2", "template": {"value": "{value} μg/m³"}},
+    "pm2.5": {"label": "air_quality.pm2_5", "template": {"value": "{value} μg/m³"}},
+    "pm10": {"label": "air_quality.pm10", "template": {"value": "{value} μg/m³"}},
+    "epa": {"label": "air_quality.epa.label", "template": {"value": "{summary}"}},
+    "defra": {"label": "air_quality.defra.label", "template": {"value": "{summary}"}},
 }
 
 ASTRONOMY_FIELDS: Mapping[str, WeatherField] = {
-    "sunrise": {
-        "label": "astronomy.sunrise",
-        "template": { "value": "{value}" }
-    },
-    "sunset": {
-        "label": "astronomy.sunset",
-        "template": { "value": "{value}" }
-    },
-    "moonrise": {
-        "label": "astronomy.moonrise",
-        "template": { "value": "{value}" }
-    },
-    "moonset": {
-        "label": "astronomy.moonset",
-        "template": { "value": "{value}" }
-    },
+    "sunrise": {"label": "astronomy.sunrise", "template": {"value": "{value}"}},
+    "sunset": {"label": "astronomy.sunset", "template": {"value": "{value}"}},
+    "moonrise": {"label": "astronomy.moonrise", "template": {"value": "{value}"}},
+    "moonset": {"label": "astronomy.moonset", "template": {"value": "{value}"}},
     "moon_phase": {
         "label": "astronomy.moon_phase.label",
-        "template": { "value": "{phase}" }
+        "template": {"value": "{phase}"},
     },
     "moon_illum": {
         "label": "astronomy.moon_illumination",
-        "template": { "value": "{illum}%" }
-    }
+        "template": {"value": "{illum}%"},
+    },
 }
 
 RAIN_SNOW_FIELDS: Mapping[str, WeatherField] = {
     "will_it_rain": {
         "label": "forecast.will_it_rain",
-        "template": { "tr": True, "value": "forecast.will_it_rain_template" }
+        "template": {"tr": True, "value": "forecast.will_it_rain_template"},
     },
     "will_it_snow": {
         "label": "forecast.will_it_snow",
-        "template": { "tr": True, "value": "forecast.will_it_snow_template" }
-    }
+        "template": {"tr": True, "value": "forecast.will_it_snow_template"},
+    },
 }
 
 DAILY_FORECAST_FIELDS: Mapping[str, WeatherField] = {
     "min_max_temp": {
         "label": "forecast.min_max_temp",
-        "template": { "value": "{mintemp}°{minunit} - {maxtemp}°{maxunit}" }
+        "template": {"value": "{mintemp}°{minunit} - {maxtemp}°{maxunit}"},
     },
-    "max_wind": {
-        "label": "forecast.max_wind",
-        "template": { "value": "{speed}{unit}" }
-    },
+    "max_wind": {"label": "forecast.max_wind", "template": {"value": "{speed}{unit}"}},
     "precipitation": {
         "label": "weather.precipitation",
-        "template": { "value": "{height}{unit}" }
+        "template": {"value": "{height}{unit}"},
     },
-    "snowfall": {
-        "label": "forecast.snowfall",
-        "template": { "value": "{height}{unit}" }
-    },
+    "snowfall": {"label": "forecast.snowfall", "template": {"value": "{height}{unit}"}},
     "avg_visibility": {
         "label": "forecast.avg_visibility",
-        "template": { "value": "{distance}{unit}" }
+        "template": {"value": "{distance}{unit}"},
     },
     **RAIN_SNOW_FIELDS,
     "uv_index": {
         "label": "weather.uv_index.label",
-        "template": { "value": "{value} ({summary})" }
-    }
+        "template": {"value": "{value} ({summary})"},
+    },
 }
 
 _hour_fields = CURRENT_WEATHER_FIELDS.copy()
 _hour_fields.pop("air_quality")
 
-HOURLY_FORECAST_FIELDS: Mapping[str, WeatherField] = { **_hour_fields, **RAIN_SNOW_FIELDS }
+HOURLY_FORECAST_FIELDS: Mapping[str, WeatherField] = {
+    **_hour_fields,
+    **RAIN_SNOW_FIELDS,
+}
 
 UK_DEFRA_BANDS = {
     1: "0-11 µgm⁻³",
@@ -240,7 +193,7 @@ UK_DEFRA_BANDS = {
     7: "54-58 µgm⁻³",
     8: "59-64 µgm⁻³",
     9: "65-70 µgm⁻³",
-    10: ">71 µgm⁻³"
+    10: ">71 µgm⁻³",
 }
 
 US_EPA_INDEX = {
@@ -249,7 +202,7 @@ US_EPA_INDEX = {
     3: "air_quality.epa.unhealthy_sensitive",
     4: "air_quality.epa.unhealthy",
     5: "air_quality.epa.very_unhealthy",
-    6: "air_quality.epa.hazardous"
+    6: "air_quality.epa.hazardous",
 }
 
 MOON_PHASE = {
@@ -260,5 +213,5 @@ MOON_PHASE = {
     "Full Moon": "astronomy.moon_phase.full_moon",
     "Waning Gibbous": "astronomy.moon_phase.waning_gibbous",
     "Last Quarter": "astronomy.moon_phase.last_quarter",
-    "Waning Crescent": "astronomy.moon_phase.waning_crescent"
+    "Waning Crescent": "astronomy.moon_phase.waning_crescent",
 }

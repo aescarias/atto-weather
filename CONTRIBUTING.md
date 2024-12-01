@@ -1,10 +1,10 @@
 # Contributing Guidelines
 
-Thank you for showing an interesting in contributing to Atto Weather!
+Thank you for considering a contribution to Atto Weather!
 
 ## Reporting Issues
 
-When reporting an issue, please provide the information below. This will allow developers to debug your issue and implement potential fixes.
+When reporting an issue, please provide the information below. This will allow us to debug your issue and implement possible fixes.
 
 1) The version of Atto Weather and your operating system.
 2) The log file created by the app (run the app through the command line).
@@ -34,7 +34,7 @@ Atto Weather uses TOML files for translations. They are stored in the `languages
 ### Style Guide
 
 - Docstrings should be written according to the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html#docstrings).
-- Code should mostly adhere to the [PEP8](https://www.python.org/dev/peps/pep-0008/) style guide.
+- Code is formatted using Ruff. Make sure to follow the [PEP8](https://www.python.org/dev/peps/pep-0008/) style guide as well.
 - Markdown documents are linted through [Markdownlint](https://github.com/DavidAnson/markdownlint).
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). See below.
 - Strings within the user interface should be localized.
@@ -49,17 +49,17 @@ Our project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.h
 
 ### Commit Messages
 
-Commit messages should be descriptive and concise. Commit messages should also specify their scope. The scope should be the modules or areas affected by the commit. (for example, `fix(ui): ...`).
+Commit messages should be descriptive and concise. Commit messages should also specify their scope. The scope should be the modules or areas affected by the commit (for example, `fix(ui): ...`).
 
 The scopes currently in use are:
 
-- `docs`: Documentation changes within code or associated resources
-- `i18n`: Translations
-- `tests`: Code coverage and unit testing
-- `ui`: Changes to user interface
+- `docs`: Documentation changes within code or associated resources.
+- `i18n`: Translations.
+- `tests`: Code coverage and unit testing.
+- `ui`: Changes to user interface.
 
 The commit types currently in use are:
 
 - `feat` for new features.
-- `fix` For bug fixes (if applicable, they should reference the issue this commit resolves)
+- `fix` For bug fixes (if applicable, they should reference the issue this commit resolves).
 - `chore` for anything else not covered in the other types.

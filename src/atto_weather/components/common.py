@@ -1,12 +1,18 @@
 from __future__ import annotations
 
-from typing import Any, cast, Literal, Mapping, TypedDict
-
-from PySide6.QtGui import QFont, QPixmap
-from PySide6.QtWidgets import QFormLayout, QGridLayout, QLabel, QSizePolicy, QSpacerItem, QWidget
-from typing_extensions import NotRequired
+from typing import Any, Literal, Mapping, TypedDict, cast
 
 from atto_weather.i18n import get_translation as lo
+from PySide6.QtGui import QFont, QPixmap
+from PySide6.QtWidgets import (
+    QFormLayout,
+    QGridLayout,
+    QLabel,
+    QSizePolicy,
+    QSpacerItem,
+    QWidget,
+)
+from typing_extensions import NotRequired
 
 
 class WeatherFieldTemplate(TypedDict):
@@ -15,7 +21,7 @@ class WeatherFieldTemplate(TypedDict):
     
     If ``tr`` is True, then this property is the localizable identifier that 
     contains the template."""
-    
+
     tr: NotRequired[bool]
     """Whether the template is loaded from a language file. Defaults to False."""
 
@@ -28,11 +34,13 @@ class WeatherField(TypedDict):
 
 
 class WeatherFieldWidget(QWidget):
-    def __init__(self, fields: Mapping[str, WeatherField], type_: Literal["form", "grid"]) -> None:
+    def __init__(
+        self, fields: Mapping[str, WeatherField], type_: Literal["form", "grid"]
+    ) -> None:
         super().__init__()
-        
+
         self.fields = fields
-        
+
         if type_ == "form":
             self.wgt_layout = QFormLayout()
             populate_form(self.wgt_layout, self.fields)
@@ -54,13 +62,17 @@ class WeatherFieldWidget(QWidget):
 
 class WeatherOverview(QWidget):
     """Widget that displays the time's weather condition, temperature, and a related icon"""
-    
-    def __init__(self) -> None:
+
+    def __init__(self, *, show_date: bool = False) -> None:
         super().__init__()
+
+        self.show_date = show_date
 
         self.wgt_layout = QGridLayout()
         self.wgt_layout.setSpacing(10)
 
+        self.date_label = QLabel()
+        self.date_label.setVisible(self.show_date)
         self.icon_label = QLabel()
         self.temp_label = create_label(weight=QFont.Weight.Bold, point_size=16)
         self.condition_label = QLabel()
@@ -69,16 +81,25 @@ class WeatherOverview(QWidget):
         self.wgt_layout.addWidget(self.temp_label, 0, 1)
         self.wgt_layout.addWidget(self.condition_label, 1, 1)
         self.wgt_layout.addItem(
-            QSpacerItem(50, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum),
-            0, 2, 1, 1
+            QSpacerItem(
+                50, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+            ),
+            0,
+            2,
+            1,
+            1,
         )
 
         self.setLayout(self.wgt_layout)
 
-    def update_details(self, temperature: str, condition: str, icon: QPixmap) -> None:
+    def update_details(
+        self, temperature: str, condition: str, icon: QPixmap, date: str | None = None
+    ) -> None:
         self.icon_label.setPixmap(icon)
         self.temp_label.setText(temperature)
         self.condition_label.setText(condition)
+        if self.show_date and date:
+            self.date_label.setText(date)
 
 
 def populate_form(layout: QFormLayout, label_map: Mapping[str, WeatherField]) -> None:
@@ -92,8 +113,9 @@ def populate_form(layout: QFormLayout, label_map: Mapping[str, WeatherField]) ->
         layout.addRow(ind_label, val_label)
 
 
-def populate_grid(layout: QGridLayout, label_map: Mapping[str, WeatherField], 
-                  columns: int) -> None:
+def populate_grid(
+    layout: QGridLayout, label_map: Mapping[str, WeatherField], columns: int
+) -> None:
     """Prepares a grid layout with ``label_map`` so that it can later be populated."""
     row, col = 0, 0
 
@@ -102,7 +124,7 @@ def populate_grid(layout: QGridLayout, label_map: Mapping[str, WeatherField],
         val_label = QLabel()
         val_label.setObjectName(ident + "_label")
         layout.addWidget(ind_label, row, col)
-        layout.addWidget(val_label, row + 1, col)        
+        layout.addWidget(val_label, row + 1, col)
 
         col += 1
         if col >= columns:
@@ -110,8 +132,12 @@ def populate_grid(layout: QGridLayout, label_map: Mapping[str, WeatherField],
             row += 2
 
 
-def create_label(text: str | None = None, *, weight: QFont.Weight | None = None, 
-                 point_size: int | None = None) -> QLabel:
+def create_label(
+    text: str | None = None,
+    *,
+    weight: QFont.Weight | None = None,
+    point_size: int | None = None,
+) -> QLabel:
     """Creates a label with ``text``, a font ``weight``, and a font ``point_size``."""
     label = QLabel(text)
     font = label.font()
@@ -125,8 +151,7 @@ def create_label(text: str | None = None, *, weight: QFont.Weight | None = None,
 
 def get_weather_icon(code: int, is_day: bool) -> QPixmap:
     """Returns the day/night (``is_day``) weather icon associated with ``code``"""
-    
+
     if is_day:
         return QPixmap(f":/day_icons/{code}.png").scaled(64, 64)
     return QPixmap(f":/night_icons/{code}.png").scaled(64, 64)
- 

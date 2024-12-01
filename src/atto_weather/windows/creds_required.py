@@ -1,8 +1,7 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout
-
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store, write_secrets
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout
 
 
 class CredentialsRequiredDialog(QDialog):
@@ -23,7 +22,7 @@ class CredentialsRequiredDialog(QDialog):
         self.api_key_edit = QLineEdit()
         self.api_key_edit.setPlaceholderText(lo("app.enter_api_key"))
         self.api_key_edit.textChanged.connect(self.check_input)
-        
+
         self.confirm_button = QPushButton(lo("app.confirm"))
         self.confirm_button.clicked.connect(self.store_api_creds)
 
@@ -36,9 +35,7 @@ class CredentialsRequiredDialog(QDialog):
         self.setLayout(self.main_layout)
 
     def store_api_creds(self) -> None:
-        store.secrets = { 
-            "weatherapi": self.api_key_edit.text() 
-        }
+        store.secrets = {"weatherapi": self.api_key_edit.text()}
         write_secrets(store.secrets)
 
         self.accept()

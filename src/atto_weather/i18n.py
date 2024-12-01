@@ -20,6 +20,7 @@ class InstalledLanguages(TypedDict):
 
 class LanguageError(Exception):
     """Exception raised for anything related to the localizer"""
+
     pass
 
 
@@ -49,7 +50,9 @@ def set_language(main: str, fallback: str = "en") -> None:
     try:
         installed_languages["main"] = load_language(main)
     except FileNotFoundError:
-        LOGGER.warning(f"Requested language {main!r} is not available. Falling back to {fallback!r}")
+        LOGGER.warning(
+            f"Requested language {main!r} is not available. Falling back to {fallback!r}"
+        )
         installed_languages["main"] = None
 
     try:
@@ -60,7 +63,7 @@ def set_language(main: str, fallback: str = "en") -> None:
 
 def get_translation(identifier: str) -> str:
     """Returns the localized value of ``identifier`` (or its fallback if not available)"""
-    
+
     main_i18n = installed_languages["main"]
     if main_i18n is None:
         main_i18n = {}
@@ -74,15 +77,19 @@ def get_translation(identifier: str) -> str:
     fb_name = fallback["self"]["language"]
 
     for part in identifier.split("."):
-        main_i18n = main_i18n.get(part) # pyright: ignore[reportOptionalMemberAccess]
-        fallback = fallback.get(part) # pyright: ignore[reportOptionalMemberAccess]
-        
+        main_i18n = main_i18n.get(part)  # pyright: ignore[reportOptionalMemberAccess]
+        fallback = fallback.get(part)  # pyright: ignore[reportOptionalMemberAccess]
+
         if main_i18n is None:
-            LOGGER.warning(f"No translation available for string {identifier!r} in lang {main_name!r}. Falling back to {fb_name}.")
-    
+            LOGGER.warning(
+                f"No translation available for string {identifier!r} in lang {main_name!r}. Falling back to {fb_name}."
+            )
+
             main_i18n = fallback
             if fallback is None:
-                LOGGER.error(f"Unable to provide translation for string {identifier!r}. Will use empty string!")
+                LOGGER.error(
+                    f"Unable to provide translation for string {identifier!r}. Will use empty string!"
+                )
                 return ""
-        
-    return main_i18n # pyright: ignore[reportReturnType]
+
+    return main_i18n  # pyright: ignore[reportReturnType]

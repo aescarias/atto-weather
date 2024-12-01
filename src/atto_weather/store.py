@@ -8,7 +8,11 @@ SECRETS_FILE = "secrets.json"
 
 
 class Store:
-    def __init__(self, settings: dict[str, Any] | None = None, secrets: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self,
+        settings: dict[str, Any] | None = None,
+        secrets: dict[str, Any] | None = None,
+    ) -> None:
         self._settings = settings
         self._secrets = secrets
 
@@ -21,14 +25,14 @@ class Store:
     @settings.setter
     def settings(self, value: dict[str, Any]) -> None:
         self._settings = value
-    
+
     @property
     def secrets(self) -> dict[str, Any]:
         if self._secrets is None:
             raise RuntimeError("Application did not load secrets.")
 
-        return self._secrets 
-    
+        return self._secrets
+
     @secrets.setter
     def secrets(self, value: dict[str, Any]) -> None:
         self._secrets = value
