@@ -21,7 +21,7 @@ def estimate_cloud_cover(cover: int) -> str:
 
 
 def get_defra_index(index: int) -> str:
-    if 1 <= index <= 3:
+    if 0 <= index <= 3:
         typ_ = lo("air_quality.defra.low")
     elif 4 <= index <= 6:
         typ_ = lo("air_quality.defra.moderate")
@@ -35,16 +35,16 @@ def get_defra_index(index: int) -> str:
     return f"{typ_} ({UK_DEFRA_BANDS[index]})"
 
 
-def estimate_uv_index(index: int) -> str:
-    if 1 <= index <= 2:
+def estimate_uv_index(index: float) -> str:
+    if 0 <= index < 3:
         return lo("weather.uv_index.low")
-    elif 3 <= index <= 5:
+    elif 3 <= index < 6:
         return lo("weather.uv_index.moderate")
-    elif 6 <= index <= 7:
+    elif 6 <= index < 8:
         return lo("weather.uv_index.high")
     elif 8 <= index <= 10:
         return lo("weather.uv_index.very_high")
-    elif index == 11:
+    elif 10 < index <= 11:
         return lo("weather.uv_index.extreme")
 
     raise ValueError("UV index out of range")

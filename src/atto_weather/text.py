@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
+from PySide6.QtCore import QDateTime, QTimeZone
+
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store
-from PySide6.QtCore import QDateTime, QTimeZone
 
 
 def get_temperature(celsius: int, fahrenheit: int) -> dict[str, Any]:
