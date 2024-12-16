@@ -34,9 +34,7 @@ class WeatherField(TypedDict):
 
 
 class WeatherFieldWidget(QWidget):
-    def __init__(
-        self, fields: Mapping[str, WeatherField], type_: Literal["form", "grid"]
-    ) -> None:
+    def __init__(self, fields: Mapping[str, WeatherField], type_: Literal["form", "grid"]) -> None:
         super().__init__()
 
         self.fields = fields
@@ -73,17 +71,17 @@ class WeatherOverview(QWidget):
 
         self.date_label = QLabel()
         self.date_label.setVisible(self.show_date)
+
         self.icon_label = QLabel()
         self.temp_label = create_label(weight=QFont.Weight.Bold, point_size=16)
         self.condition_label = QLabel()
 
         self.wgt_layout.addWidget(self.icon_label, 0, 0, 2, 1)
         self.wgt_layout.addWidget(self.temp_label, 0, 1)
+        self.wgt_layout.addWidget(self.date_label, 0, 2)
         self.wgt_layout.addWidget(self.condition_label, 1, 1)
         self.wgt_layout.addItem(
-            QSpacerItem(
-                50, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-            ),
+            QSpacerItem(50, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum),
             0,
             2,
             1,
@@ -98,6 +96,7 @@ class WeatherOverview(QWidget):
         self.icon_label.setPixmap(icon)
         self.temp_label.setText(temperature)
         self.condition_label.setText(condition)
+
         if self.show_date and date:
             self.date_label.setText(date)
 
@@ -113,9 +112,7 @@ def populate_form(layout: QFormLayout, label_map: Mapping[str, WeatherField]) ->
         layout.addRow(ind_label, val_label)
 
 
-def populate_grid(
-    layout: QGridLayout, label_map: Mapping[str, WeatherField], columns: int
-) -> None:
+def populate_grid(layout: QGridLayout, label_map: Mapping[str, WeatherField], columns: int) -> None:
     """Prepares a grid layout with ``label_map`` so that it can later be populated."""
     row, col = 0, 0
 

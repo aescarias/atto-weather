@@ -1,6 +1,6 @@
 # Atto Weather
 
-A weather app written using PySide6.
+A really simple weather frontend.
 
 ![Amsterdam's weather shown in Atto](.github/assets/image.png)
 
