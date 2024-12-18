@@ -20,7 +20,7 @@ class CurrentWeatherWidget(WeatherFieldWidget):
     """Widget that contains details about the current weather"""
 
     def __init__(self) -> None:
-        super().__init__(CURRENT_WEATHER_FIELDS, "form")
+        super().__init__(CURRENT_WEATHER_FIELDS, "grid")
 
     def update_details(self, current: dict[str, Any], *, _aqi: bool = True) -> None:
         self.set_label(
@@ -35,9 +35,7 @@ class CurrentWeatherWidget(WeatherFieldWidget):
             "heat_index",
             **get_temperature(current["heatindex_c"], current["heatindex_f"]),
         )
-        self.set_label(
-            "dew_point", **get_temperature(current["dewpoint_c"], current["dewpoint_f"])
-        )
+        self.set_label("dew_point", **get_temperature(current["dewpoint_c"], current["dewpoint_f"]))
         self.set_label(
             "wind_speed",
             **get_distance(current["wind_kph"], current["wind_mph"], speed=True),
@@ -50,23 +48,15 @@ class CurrentWeatherWidget(WeatherFieldWidget):
             **get_distance(current["gust_kph"], current["gust_mph"], speed=True),
         )
         self.set_label("humidity", value=current["humidity"])
-        self.set_label(
-            "precipitation", **get_height(current["precip_mm"], current["precip_in"])
-        )
-        self.set_label(
-            "pressure", **get_pressure(current["pressure_mb"], current["pressure_in"])
-        )
+        self.set_label("precipitation", **get_height(current["precip_mm"], current["precip_in"]))
+        self.set_label("pressure", **get_pressure(current["pressure_mb"], current["pressure_in"]))
         self.set_label(
             "cloud_cover",
             value=current["cloud"],
             summary=estimate_cloud_cover(current["cloud"]),
         )
-        self.set_label(
-            "visibility", **get_distance(current["vis_km"], current["vis_miles"])
-        )
-        self.set_label(
-            "uv_index", value=current["uv"], summary=estimate_uv_index(current["uv"])
-        )
+        self.set_label("visibility", **get_distance(current["vis_km"], current["vis_miles"]))
+        self.set_label("uv_index", value=current["uv"], summary=estimate_uv_index(current["uv"]))
 
         if _aqi:
             print(current)

@@ -10,6 +10,7 @@ from atto_weather.components.forecast import (
     HourlyForecastWidget,
 )
 from atto_weather.text import get_temperature
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGridLayout, QListWidget, QListWidgetItem, QWidget
 
 
@@ -32,11 +33,11 @@ class CurrentWeatherPanel(QWidget):
         self.grid.addWidget(self.astronomy_group, 1, 1)
         self.grid.addWidget(self.air_quality_group, 2, 1)
 
+        self.grid.setAlignment(Qt.AlignmentFlag.AlignBaseline)
+
         self.setLayout(self.grid)
 
-    def update_details(
-        self, current: dict[str, Any], astronomy: dict[str, Any]
-    ) -> None:
+    def update_details(self, current: dict[str, Any], astronomy: dict[str, Any]) -> None:
         temp = get_temperature(current["temp_c"], current["temp_f"])
         condition = current["condition"]["text"]
 
@@ -65,9 +66,7 @@ class ForecastOverviewPanel(QListWidget):
         for date in forecasts:
             overview = WeatherOverview(show_date=True)
 
-            avgtemp = get_temperature(
-                date["day"]["avgtemp_c"], date["day"]["avgtemp_f"]
-            )
+            avgtemp = get_temperature(date["day"]["avgtemp_c"], date["day"]["avgtemp_f"])
 
             overview.update_details(
                 f"{avgtemp['value']}°{avgtemp['unit']}",
@@ -99,9 +98,7 @@ class TimeForecastPanel(QWidget):
         elif self.type_ == "hourly":
             self.forecast_wgt = HourlyForecastWidget()
         else:
-            raise ValueError(
-                "Bad argument for forecast panel: must be 'daily' or 'hourly'"
-            )
+            raise ValueError("Bad argument for forecast panel: must be 'daily' or 'hourly'")
 
         self.astronomy_wgt = AstronomyWidget()
 
@@ -126,9 +123,7 @@ class TimeForecastPanel(QWidget):
         self.astronomy_wgt.update_details(forecast["astro"])
 
     def update_daily_details(self, forecast: dict[str, Any]) -> None:
-        temp = get_temperature(
-            forecast["day"]["avgtemp_c"], forecast["day"]["avgtemp_f"]
-        )
+        temp = get_temperature(forecast["day"]["avgtemp_c"], forecast["day"]["avgtemp_f"])
         condition = forecast["day"]["condition"]["text"]
 
         self.overview_wgt.update_details(

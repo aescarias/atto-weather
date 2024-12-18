@@ -24,7 +24,7 @@ class HourlyForecastWidget(WeatherFieldWidget):
     def update_details(self, hour_forecast: dict[str, Any]) -> None:
         # Both current weather and hourly forecast use the same labels.
         # Hourly forecast includes two additional ones though and removes
-        # the 'air quality' label as it's not included in the API response (free plam)
+        # the 'air quality' label as it's not included in the API response (free plan)
         CurrentWeatherWidget.update_details(self, hour_forecast, _aqi=False)  # pyright: ignore[reportArgumentType]
 
         self.set_label(
@@ -58,15 +58,11 @@ class DailyForecastWidget(WeatherFieldWidget):
         )
         self.set_label(
             "max_wind",
-            **get_distance(
-                day_forecast["maxwind_kph"], day_forecast["maxwind_mph"], speed=True
-            ),
+            **get_distance(day_forecast["maxwind_kph"], day_forecast["maxwind_mph"], speed=True),
         )
         self.set_label(
             "precipitation",
-            **get_height(
-                day_forecast["totalprecip_mm"], day_forecast["totalprecip_in"]
-            ),
+            **get_height(day_forecast["totalprecip_mm"], day_forecast["totalprecip_in"]),
         )
         self.set_label("snowfall", height=day_forecast["totalsnow_cm"], unit="cm")
         self.set_label(

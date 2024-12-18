@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Literal, Mapping, TypedDict, cast
 
 from atto_weather.i18n import get_translation as lo
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QPixmap
 from PySide6.QtWidgets import (
     QFormLayout,
@@ -48,6 +49,8 @@ class WeatherFieldWidget(QWidget):
         else:
             raise ValueError("Bad argument for layout type: must be 'form' or 'grid'")
 
+        self.wgt_layout.setAlignment(Qt.AlignmentFlag.AlignBaseline)
+
         self.setLayout(self.wgt_layout)
 
     def set_label(self, name: str, **values: Any) -> None:
@@ -87,6 +90,7 @@ class WeatherOverview(QWidget):
             1,
             1,
         )
+        self.wgt_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.setLayout(self.wgt_layout)
 
