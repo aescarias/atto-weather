@@ -82,13 +82,15 @@ def get_translation(identifier: str) -> str:
 
         if main_i18n is None:
             LOGGER.warning(
-                f"No translation available for string {identifier!r} in lang {main_name!r}. Falling back to {fb_name}."
+                f"No translation available for string {identifier!r} in lang {main_name!r}. "
+                f"Falling back to {fb_name}."
             )
 
             main_i18n = fallback
             if fallback is None:
                 LOGGER.error(
-                    f"Unable to provide translation for string {identifier!r}. Will use empty string!"
+                    f"Unable to provide translation for string {identifier!r}. "
+                    "Will use empty string!"
                 )
                 return ""
 

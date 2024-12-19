@@ -4,7 +4,7 @@ language = "Español"
 [app]
 location_input_placeholder = "Introducir nombre de ciudad, código postal, lat/lon o dirección IP"
 find_button = "Buscar"
-powered_by = "Datos proveídos por <a href='https://www.weatherapi.com'>WeatherAPI.com</a>" # "Powered by" does not translate well literally 
+powered_by = "Datos proveídos por <a href='https://www.weatherapi.com'>WeatherAPI.com</a>"                                                                                                                                                                                                                      # "Powered by" does not translate well literally 
 settings = "Configuración"
 weather_fetch_error = "No se pudo obtener el estado del tiempo"
 creds_required = "Credenciales necesarias"
@@ -66,7 +66,7 @@ extreme = "Extremo"
 [forecast]
 min_max_temp = "Temperatura mínima/máxima"
 max_wind = "Velocidad máxima del viento"
-snowfall = "Cantidad de nieve" # compromise, again
+snowfall = "Cantidad de nieve"                                       # compromise, again
 avg_visibility = "Visibilidad promedia"
 will_it_rain = "¿Lloverá?"
 will_it_rain_template = "{value} ({chance}% probabilidad de lluvia)"
@@ -88,7 +88,7 @@ good = "Bueno"
 moderate = "Moderado"
 unhealthy_sensitive = "Poco saludable para grupos sensibles"
 unhealthy = "Poco saludable"
-very_unhealthy = "No saludable" # compromise
+very_unhealthy = "No saludable"                              # compromise
 hazardous = "Peligroso"
 
 [air_quality.defra]

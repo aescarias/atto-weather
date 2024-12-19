@@ -87,3 +87,8 @@ dmypy.json
 
 # Ruff
 .ruff_cache/
+
+# Nuitka
+*.build/
+*.dist/
+*.onefile-build/

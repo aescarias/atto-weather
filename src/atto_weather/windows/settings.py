@@ -2,7 +2,7 @@ import logging
 from functools import partial
 from typing import cast
 
-from atto_weather.i18n import get_language_map
+from atto_weather.constants.settings import SECRETS_FIELDS, SETTINGS_FIELDS, SelectUISetting
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store, write_secrets, write_settings
 from PySide6.QtCore import Qt, Slot
@@ -25,63 +25,6 @@ logging.basicConfig()
 
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_SETTINGS = {
-    "language": "en",
-    "temperature": "celsius",
-    "distance": "km",
-    "pressure": "mbar",
-    "height": "mm",
-    "round_temp_values": True,
-}
-
-DEFAULT_SECRETS = {"weatherapi": ""}
-
-SETTINGS_FIELDS = {
-    "language": {
-        "label": "settings.language",
-        "type": "select",
-        "options": get_language_map(),
-        "options_preloc": True,
-    },
-    "temperature": {
-        "label": "settings.temperature.label",
-        "type": "select",
-        "options": {
-            "celsius": "settings.temperature.celsius",
-            "fahrenheit": "settings.temperature.fahrenheit",
-        },
-    },
-    "pressure": {
-        "label": "settings.pressure.label",
-        "type": "select",
-        "options": {
-            "mbar": "settings.pressure.millibars",
-            "inhg": "settings.pressure.inhg",
-        },
-    },
-    "height": {
-        "label": "settings.height.label",
-        "type": "select",
-        "options": {
-            "mm": "settings.height.millimeters",
-            "in": "settings.height.inches",
-        },
-    },
-    "distance": {
-        "label": "settings.distance.label",
-        "type": "select",
-        "options": {
-            "km": "settings.distance.kilometers",
-            "mi": "settings.distance.miles",
-        },
-    },
-    "round_temp_values": {"label": "settings.round_temp_values", "type": "check"},
-}
-
-SECRETS_FIELDS = {
-    "weatherapi": {"label": "settings.weather_api_key", "type": "password"}
-}
-
 
 class SettingsDialog(QDialog):
     def __init__(self) -> None:
@@ -96,9 +39,11 @@ class SettingsDialog(QDialog):
                 LOGGER.warning(f"unknown field for settings: {setting!r}")
                 continue
 
-            if field["type"] == "select":
+            if field["kind"] == "select":
+                assert isinstance(value, str)
+
                 combobox = QComboBox()
-                if field.get("options_preloc"):
+                if field.get("options_preloc", False):
                     combobox.addItems(list(field["options"].values()))
                     combobox.setCurrentText(field["options"][value])
                 else:
@@ -110,12 +55,13 @@ class SettingsDialog(QDialog):
                 )
 
                 self.main_layout.addRow(lo(field["label"]), combobox)
-            elif field["type"] == "check":
+            elif field["kind"] == "check":
+                assert isinstance(value, bool)
+
                 checkbox = QCheckBox(lo(field["label"]))
                 checkbox.setChecked(value)
-                checkbox.checkStateChanged.connect(
-                    partial(self.update_checkbox, checkbox, setting)
-                )
+                checkbox.checkStateChanged.connect(partial(self.update_checkbox, checkbox, setting))
+
                 self.main_layout.addRow(checkbox)
 
         for secret, value in store.secrets.items():
@@ -124,15 +70,15 @@ class SettingsDialog(QDialog):
                 LOGGER.warning(f"unknown field for secrets: {secret!r}")
                 continue
 
-            if field["type"] == "password":
+            if field["kind"] == "password":
+                assert isinstance(value, str)
+
                 edit = QLineEdit()
                 edit.setText(value)
                 edit.setEchoMode(QLineEdit.EchoMode.Password)
 
                 if (app := cast(QApplication, QApplication.instance())) is not None:
-                    app.focusChanged.connect(
-                        partial(self.handle_edit_focus, widget=edit)
-                    )
+                    app.focusChanged.connect(partial(self.handle_edit_focus, widget=edit))
 
                 edit.textChanged.connect(partial(self.update_password, edit, secret))
                 self.main_layout.addRow(lo(field["label"]), edit)
@@ -141,9 +87,7 @@ class SettingsDialog(QDialog):
         self.confirm_button = QPushButton(lo("app.confirm"))
         self.confirm_button.clicked.connect(self.close)
         self.actions_layout.addSpacerItem(
-            QSpacerItem(
-                50, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
-            )
+            QSpacerItem(50, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         )
         self.actions_layout.addWidget(self.confirm_button)
 
@@ -156,14 +100,12 @@ class SettingsDialog(QDialog):
 
     @Slot()
     def update_combobox(self, combo: QComboBox, setting: str, *_qt_args) -> None:
-        if SETTINGS_FIELDS[setting].get("options_preloc"):
-            labels_to_values = {
-                v: k for k, v in SETTINGS_FIELDS[setting]["options"].items()
-            }
+        select = cast(SelectUISetting, SETTINGS_FIELDS[setting])
+
+        if select.get("options_preloc", False):
+            labels_to_values = {v: k for k, v in select["options"].items()}
         else:
-            labels_to_values = {
-                lo(v): k for k, v in SETTINGS_FIELDS[setting]["options"].items()
-            }
+            labels_to_values = {lo(v): k for k, v in select["options"].items()}
 
         store.settings[setting] = labels_to_values[combo.currentText()]
 
@@ -178,6 +120,7 @@ class SettingsDialog(QDialog):
     def handle_edit_focus(self, old: QWidget, new: QWidget, *, widget: QLineEdit):
         if old is widget:  # lost focus
             widget.setEchoMode(QLineEdit.EchoMode.Password)
+
         if new is widget:  # gained focus
             widget.setEchoMode(QLineEdit.EchoMode.Normal)
 
