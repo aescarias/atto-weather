@@ -1,7 +1,25 @@
-from typing import Mapping
+from typing import Mapping, TypedDict
 
-from atto_weather.components.common import WeatherField
 from atto_weather.i18n import get_translation as lo
+from typing_extensions import NotRequired
+
+
+class WeatherFieldTemplate(TypedDict):
+    value: str
+    """Python-style template which is later populated by its corresponding values.
+    
+    If ``tr`` is True, then this property is the localizable identifier that 
+    contains the template."""
+
+    tr: NotRequired[bool]
+    """Whether the template is loaded from a language file. Defaults to False."""
+
+
+class WeatherField(TypedDict):
+    label: str
+    """The localizable identifier for this property."""
+    template: WeatherFieldTemplate
+    """The Python-style template that is later populated by its corresponding values."""
 
 
 def estimate_cloud_cover(cover: int) -> str:
@@ -71,48 +89,24 @@ POINT16_COMPASS = {
 }
 
 CURRENT_WEATHER_FIELDS: Mapping[str, WeatherField] = {
-    "feels_like": {
-        "label": "weather.feels_like",
-        "template": {"value": "{value}°{unit}"},
-    },
-    "windchill": {
-        "label": "weather.windchill",
-        "template": {"value": "{value}°{unit}"},
-    },
-    "heat_index": {
-        "label": "weather.heat_index",
-        "template": {"value": "{value}°{unit}"},
-    },
-    "dew_point": {
-        "label": "weather.dew_point",
-        "template": {"value": "{value}°{unit}"},
-    },
+    "feels_like": {"label": "weather.feels_like", "template": {"value": "{feels_like}"}},
+    "windchill": {"label": "weather.windchill", "template": {"value": "{windchill}"}},
+    "heat_index": {"label": "weather.heat_index", "template": {"value": "{heat_index}"}},
+    "dew_point": {"label": "weather.dew_point", "template": {"value": "{dew_point}"}},
     "wind_speed": {
         "label": "weather.wind_speed",
-        "template": {"value": "{speed}{unit} @ {degree}° {direction} ({dir_short})"},
+        "template": {"value": "{speed} @ {degree}° {direction} ({shorthand})"},
     },
-    "wind_gust": {"label": "weather.wind_gust", "template": {"value": "{speed}{unit}"}},
-    "humidity": {"label": "weather.humidity", "template": {"value": "{value}%"}},
-    "precipitation": {
-        "label": "weather.precipitation",
-        "template": {"value": "{height}{unit}"},
-    },
-    "pressure": {
-        "label": "weather.pressure",
-        "template": {"value": "{pressure}{unit}"},
-    },
+    "wind_gust": {"label": "weather.wind_gust", "template": {"value": "{speed}"}},
+    "humidity": {"label": "weather.humidity", "template": {"value": "{humidity}%"}},
+    "precipitation": {"label": "weather.precipitation", "template": {"value": "{height}"}},
+    "pressure": {"label": "weather.pressure", "template": {"value": "{pressure}"}},
     "cloud_cover": {
         "label": "weather.cloud_cover.label",
-        "template": {"value": "{value}% ({summary})"},
+        "template": {"value": "{cloud}% ({summary})"},
     },
-    "visibility": {
-        "label": "weather.visibility",
-        "template": {"value": "{distance}{unit}"},
-    },
-    "uv_index": {
-        "label": "weather.uv_index.label",
-        "template": {"value": "{value} ({summary})"},
-    },
+    "visibility": {"label": "weather.visibility", "template": {"value": "{distance}"}},
+    "uv_index": {"label": "weather.uv_index.label", "template": {"value": "{index} ({summary})"}},
     "air_quality": {"label": "air_quality.label", "template": {"value": "{summary}"}},
 }
 
@@ -156,22 +150,19 @@ RAIN_SNOW_FIELDS: Mapping[str, WeatherField] = {
 DAILY_FORECAST_FIELDS: Mapping[str, WeatherField] = {
     "min_max_temp": {
         "label": "forecast.min_max_temp",
-        "template": {"value": "{mintemp}°{minunit} - {maxtemp}°{maxunit}"},
+        "template": {"value": "{mintemp} - {maxtemp}"},
     },
-    "max_wind": {"label": "forecast.max_wind", "template": {"value": "{speed}{unit}"}},
-    "precipitation": {
-        "label": "weather.precipitation",
-        "template": {"value": "{height}{unit}"},
-    },
-    "snowfall": {"label": "forecast.snowfall", "template": {"value": "{height}{unit}"}},
+    "max_wind": {"label": "forecast.max_wind", "template": {"value": "{speed}"}},
+    "precipitation": {"label": "weather.precipitation", "template": {"value": "{height}"}},
+    "snowfall": {"label": "forecast.snowfall", "template": {"value": "{height}"}},
     "avg_visibility": {
         "label": "forecast.avg_visibility",
-        "template": {"value": "{distance}{unit}"},
+        "template": {"value": "{distance}"},
     },
     **RAIN_SNOW_FIELDS,
     "uv_index": {
         "label": "weather.uv_index.label",
-        "template": {"value": "{value} ({summary})"},
+        "template": {"value": "{index} ({summary})"},
     },
 }
 

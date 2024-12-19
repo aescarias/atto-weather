@@ -21,7 +21,8 @@ from PySide6.QtWidgets import (
 )
 
 from atto_weather._version import __version__ as APP_VERSION
-from atto_weather.api import WeatherWorker
+from atto_weather.api.core import Forecast, WeatherInfo
+from atto_weather.api.worker import WeatherWorker
 from atto_weather.components.panels import (
     CurrentWeatherPanel,
     ForecastOverviewPanel,
@@ -29,7 +30,7 @@ from atto_weather.components.panels import (
 )
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store
-from atto_weather.text import format_datetime
+from atto_weather.utils.text import format_datetime
 from atto_weather.windows.settings import SettingsDialog
 
 
@@ -38,7 +39,7 @@ class AttoWeather(QMainWindow):
         super().__init__()
 
         self.pool = QThreadPool()
-        self.weather = None
+        self.weather_data: WeatherInfo | None = None
 
         self.setWindowTitle("Atto Weather")
 
@@ -133,23 +134,23 @@ class AttoWeather(QMainWindow):
 
     @Slot()
     def update_forecast(self) -> None:
-        if self.weather is None:
+        if self.weather_data is None:
             return
 
         idx = self.forecast.currentIndex().row()
-        forecast = self.weather["forecast"]["forecastday"][idx]
+        forecast = self.weather_data.forecasts[idx]
 
         self.app_stack.setCurrentWidget(self.day_forecast)
 
         self.day_forecast.update_daily_details(forecast)
-        # API provides no docs on this, but as far as I can tell, this value is UTC.
-        self.location_time_label.setText(format_datetime(forecast["date_epoch"], "UTC", "date"))
+
+        self.location_time_label.setText(format_datetime(forecast.date_epoch, "UTC", "date"))
         self.location_hour_select.setVisible(True)
         self.location_hour_select.clear()
 
         items = [lo("app.average")] + [
-            format_datetime(hour["time_epoch"], self.weather["location"]["tz_id"], "time")
-            for hour in forecast["hour"]
+            format_datetime(hour.time_epoch, self.weather_data.location.timezone_id, "time")
+            for hour in forecast.hours
         ]
 
         self.location_hour_select.currentIndexChanged.connect(
@@ -161,34 +162,25 @@ class AttoWeather(QMainWindow):
     def update_weather(self, weather: dict[str, Any]) -> None:
         self.weather_fetch_button.setEnabled(True)
 
-        self.weather = weather
+        self.weather_data = WeatherInfo.from_dict(weather)
         self.app_stack.setCurrentWidget(self.current_weather)
 
-        location = ", ".join(
-            val
-            for val in [
-                weather["location"]["name"],
-                weather["location"]["region"],
-                weather["location"]["country"],
-            ]
-            if val.strip()
-        )
-        self.location_name_label.setText(location)
+        self.location_name_label.setText(self.weather_data.location.full_name)
 
         self.location_time_label.setText(
             format_datetime(
-                weather["location"]["localtime_epoch"],
-                weather["location"]["tz_id"],
+                self.weather_data.location.localtime_epoch,
+                self.weather_data.location.timezone_id,
                 "date",
             )
         )
 
         self.current_weather.update_details(
-            weather["current"], weather["forecast"]["forecastday"][0]["astro"]
+            self.weather_data.current, self.weather_data.forecasts[0].astronomy
         )
 
     @Slot()
-    def update_hour_forecast(self, forecast: dict[str, Any], idx: int) -> None:
+    def update_hour_forecast(self, forecast: Forecast, idx: int) -> None:
         if idx == 0:  # average
             self.app_stack.setCurrentWidget(self.day_forecast)
             return
@@ -198,27 +190,27 @@ class AttoWeather(QMainWindow):
 
     @Slot()
     def show_current(self) -> None:
-        if self.weather is None:
+        if self.weather_data is None:
             return
 
         self.location_hour_select.setVisible(False)
         self.app_stack.setCurrentWidget(self.current_weather)
         self.location_time_label.setText(
             format_datetime(
-                self.weather["location"]["localtime_epoch"],
-                self.weather["location"]["tz_id"],
+                self.weather_data.location.localtime_epoch,
+                self.weather_data.location.timezone_id,
                 "date",
             )
         )
 
     @Slot()
     def show_forecast(self) -> None:
-        if self.weather is None:
+        if self.weather_data is None:
             return
 
         self.location_hour_select.setVisible(False)
         self.app_stack.setCurrentWidget(self.forecast)
-        self.forecast.update_details(self.weather["forecast"]["forecastday"])
+        self.forecast.update_details(self.weather_data.forecasts)
 
     @Slot()
     def fetch_weather(self) -> None:

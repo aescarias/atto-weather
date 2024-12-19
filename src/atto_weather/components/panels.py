@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Literal
 
+from atto_weather.api.core import Astronomy, CurrentWeather, Forecast
 from atto_weather.components.common import WeatherOverview, get_weather_icon
-from atto_weather.components.current import CurrentAQIWidget, CurrentWeatherWidget
+from atto_weather.components.current import AirQualityWidget, CurrentWeatherWidget
 from atto_weather.components.forecast import (
     AstronomyWidget,
     DailyForecastWidget,
     HourlyForecastWidget,
 )
-from atto_weather.text import get_temperature
+from atto_weather.utils.text import format_temperature
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGridLayout, QListWidget, QListWidgetItem, QWidget
 
@@ -26,7 +27,7 @@ class CurrentWeatherPanel(QWidget):
         self.weather_wgt = CurrentWeatherWidget()
 
         self.astronomy_group = AstronomyWidget()
-        self.air_quality_group = CurrentAQIWidget()
+        self.air_quality_group = AirQualityWidget()
 
         self.grid.addWidget(self.overview_wgt, 0, 0, 1, 2)
         self.grid.addWidget(self.weather_wgt, 1, 0, 2, 1)
@@ -37,18 +38,15 @@ class CurrentWeatherPanel(QWidget):
 
         self.setLayout(self.grid)
 
-    def update_details(self, current: dict[str, Any], astronomy: dict[str, Any]) -> None:
-        temp = get_temperature(current["temp_c"], current["temp_f"])
-        condition = current["condition"]["text"]
-
+    def update_details(self, current: CurrentWeather, astronomy: Astronomy) -> None:
         self.overview_wgt.update_details(
-            f"{temp['value']}°{temp['unit']}",
-            condition,
-            get_weather_icon(current["condition"]["code"], bool(current["is_day"])),
+            format_temperature(current.temperature),
+            current.condition.text,
+            get_weather_icon(current.condition.code, current.is_day),
         )
 
         self.weather_wgt.update_details(current)
-        self.air_quality_group.update_details(current["air_quality"])
+        self.air_quality_group.update_details(current.air_quality)
         self.astronomy_group.update_details(astronomy)
 
 
@@ -60,20 +58,17 @@ class ForecastOverviewPanel(QListWidget):
 
         self.setStyleSheet("QListWidget { border: none; }")
 
-    def update_details(self, forecasts: list[dict[str, Any]]) -> None:
+    def update_details(self, forecasts: list[Forecast]) -> None:
         self.clear()
 
         for date in forecasts:
             overview = WeatherOverview(show_date=True)
 
-            avgtemp = get_temperature(date["day"]["avgtemp_c"], date["day"]["avgtemp_f"])
-
             overview.update_details(
-                f"{avgtemp['value']}°{avgtemp['unit']}",
-                date["day"]["condition"]["text"],
-                get_weather_icon(date["day"]["condition"]["code"], True),
-                # FIXME: Show a formatted value from the epoch here
-                date["date"],
+                format_temperature(date.day.avg_temperature),
+                date.day.condition.text,
+                get_weather_icon(date.day.condition.code, True),
+                date.date_formatted,
             )
 
             item = QListWidgetItem()
@@ -108,28 +103,24 @@ class TimeForecastPanel(QWidget):
 
         self.setLayout(self.grid)
 
-    def update_hourly_details(self, forecast: dict[str, Any], hour: int) -> None:
-        hour_data = forecast["hour"][hour]
-
-        temp = get_temperature(hour_data["temp_c"], hour_data["temp_f"])
-        condition = hour_data["condition"]["text"]
+    def update_hourly_details(self, forecast: Forecast, hour_index: int) -> None:
+        hour = forecast.hours[hour_index]
 
         self.overview_wgt.update_details(
-            f"{temp['value']}°{temp['unit']}",
-            condition,
-            get_weather_icon(hour_data["condition"]["code"], True),
+            format_temperature(hour.temperature),
+            hour.condition.text,
+            get_weather_icon(hour.condition.code, True),
         )
-        self.forecast_wgt.update_details(hour_data)
-        self.astronomy_wgt.update_details(forecast["astro"])
 
-    def update_daily_details(self, forecast: dict[str, Any]) -> None:
-        temp = get_temperature(forecast["day"]["avgtemp_c"], forecast["day"]["avgtemp_f"])
-        condition = forecast["day"]["condition"]["text"]
+        self.forecast_wgt.update_details(hour)  # type: ignore
+        self.astronomy_wgt.update_details(forecast.astronomy)
 
+    def update_daily_details(self, forecast: Forecast) -> None:
         self.overview_wgt.update_details(
-            f"{temp['value']}°{temp['unit']}",
-            condition,
-            get_weather_icon(forecast["day"]["condition"]["code"], True),
+            format_temperature(forecast.day.avg_temperature),
+            forecast.day.condition.text,
+            get_weather_icon(forecast.day.condition.code, True),
         )
-        self.forecast_wgt.update_details(forecast["day"])
-        self.astronomy_wgt.update_details(forecast["astro"])
+
+        self.forecast_wgt.update_details(forecast.day)  # type: ignore
+        self.astronomy_wgt.update_details(forecast.astronomy)

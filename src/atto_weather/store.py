@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from atto_weather.constants.settings import Secrets, Settings
+from atto_weather.utils.settings import Secrets, Settings
 
 SETTINGS_FILE = "settings.json"
 SECRETS_FILE = "secrets.json"

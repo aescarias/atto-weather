@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import httpx
+from atto_weather._version import __version__ as app_version
 from PySide6.QtCore import QObject, QRunnable, Signal, Slot
-
-from ._version import __version__ as app_version
 
 USER_AGENT = f"aescarias/atto-weather {app_version}"
 

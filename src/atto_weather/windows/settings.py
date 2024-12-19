@@ -2,9 +2,9 @@ import logging
 from functools import partial
 from typing import cast
 
-from atto_weather.constants.settings import SECRETS_FIELDS, SETTINGS_FIELDS, SelectUISetting
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store, write_secrets, write_settings
+from atto_weather.utils.settings import SECRETS_FIELDS, SETTINGS_FIELDS, SelectUISetting
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (

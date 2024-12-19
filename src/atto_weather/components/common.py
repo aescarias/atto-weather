@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Literal, Mapping, TypedDict, cast
+from typing import Any, Literal, Mapping, cast
 
 from atto_weather.i18n import get_translation as lo
+from atto_weather.utils.fields import WeatherField
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QPixmap
 from PySide6.QtWidgets import (
@@ -13,25 +14,6 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QWidget,
 )
-from typing_extensions import NotRequired
-
-
-class WeatherFieldTemplate(TypedDict):
-    value: str
-    """Python-style template which is later populated by its corresponding values.
-    
-    If ``tr`` is True, then this property is the localizable identifier that 
-    contains the template."""
-
-    tr: NotRequired[bool]
-    """Whether the template is loaded from a language file. Defaults to False."""
-
-
-class WeatherField(TypedDict):
-    label: str
-    """The localizable identifier for this property."""
-    template: WeatherFieldTemplate
-    """The Python-style template that is later populated by its corresponding values."""
 
 
 class WeatherFieldWidget(QWidget):
