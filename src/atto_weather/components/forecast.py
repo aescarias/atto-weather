@@ -11,7 +11,13 @@ from atto_weather.utils.fields import (
     MOON_PHASE,
     estimate_uv_index,
 )
-from atto_weather.utils.text import format_boolean, format_height, format_speed, format_temperature
+from atto_weather.utils.text import (
+    format_boolean,
+    format_distance,
+    format_height,
+    format_speed,
+    format_temperature,
+)
 
 
 class HourlyForecastWidget(WeatherFieldWidget):
@@ -56,7 +62,7 @@ class DailyForecastWidget(WeatherFieldWidget):
         )
         self.set_label("precipitation", height=format_height(day_forecast.total_precipitation))
         self.set_label("snowfall", height=day_forecast.total_snowfall_cm)
-        self.set_label("avg_visibility", distance=day_forecast.avg_visibility)
+        self.set_label("avg_visibility", distance=format_distance(day_forecast.avg_visibility))
         self.set_label(
             "will_it_rain",
             value=format_boolean(day_forecast.will_it_rain),

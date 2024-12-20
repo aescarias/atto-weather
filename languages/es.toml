@@ -16,6 +16,11 @@ no = "No"
 current_weather = "Tiempo"
 forecast = "Previsión"
 average = "Promedio"
+name = "Nombre"
+region = "Región"
+country = "País"
+lat_lon = "Lat/lon"
+quota_left = "{quota:,} peticiones restantes"
 
 [point16]
 north = "Norte"
@@ -119,6 +124,7 @@ waning_crescent = "Luna Menguante"
 
 [settings]
 round_temp_values = "Redondear valores de temperatura al entero más cercano"
+show_remaining_quota = "Mostrar cuota de peticiones a la API restantes"
 weather_api_key = "Clave de WeatherAPI"
 language = "Idioma"
 

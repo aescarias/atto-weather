@@ -1,10 +1,15 @@
-import logging
 from functools import partial
 from typing import cast
 
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store, write_secrets, write_settings
-from atto_weather.utils.settings import SECRETS_FIELDS, SETTINGS_FIELDS, SelectUISetting
+from atto_weather.utils.settings import (
+    DEFAULT_SECRETS,
+    DEFAULT_SETTINGS,
+    SECRETS_FIELDS,
+    SETTINGS_FIELDS,
+    SelectUISetting,
+)
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
@@ -21,10 +26,6 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-logging.basicConfig()
-
-LOGGER = logging.getLogger(__name__)
-
 
 class SettingsDialog(QDialog):
     def __init__(self) -> None:
@@ -33,11 +34,10 @@ class SettingsDialog(QDialog):
         self.setWindowTitle(lo("app.settings"))
         self.main_layout = QFormLayout()
 
-        for setting, value in store.settings.items():
-            field = SETTINGS_FIELDS.get(setting)
-            if field is None:
-                LOGGER.warning(f"unknown field for settings: {setting!r}")
-                continue
+        for setting, field in SETTINGS_FIELDS.items():
+            value = store.settings.get(setting)
+            if value is None:
+                value = DEFAULT_SETTINGS[setting]
 
             if field["kind"] == "select":
                 assert isinstance(value, str)
@@ -64,10 +64,10 @@ class SettingsDialog(QDialog):
 
                 self.main_layout.addRow(checkbox)
 
-        for secret, value in store.secrets.items():
-            field = SECRETS_FIELDS.get(secret)
+        for secret, field in SECRETS_FIELDS.items():
+            value = store.secrets.get(secret)
             if field is None:
-                LOGGER.warning(f"unknown field for secrets: {secret!r}")
+                value = DEFAULT_SECRETS[secret]
                 continue
 
             if field["kind"] == "password":
@@ -89,6 +89,7 @@ class SettingsDialog(QDialog):
         self.actions_layout.addSpacerItem(
             QSpacerItem(50, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         )
+
         self.actions_layout.addWidget(self.confirm_button)
 
         self.main_layout.addRow(self.actions_layout)

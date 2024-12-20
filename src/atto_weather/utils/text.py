@@ -5,7 +5,7 @@ from typing import Literal
 from atto_weather.api.core import Distance, Height, Pressure, Speed, Temperature
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store
-from PySide6.QtCore import QDateTime, QTimeZone
+from PySide6.QtCore import QDateTime, QLocale, QTimeZone
 
 
 def format_temperature(temp: Temperature) -> str:
@@ -60,7 +60,11 @@ def format_datetime(
     else:
         date = QDateTime.fromSecsSinceEpoch(epoch, QTimeZone(timezone.encode()))
 
+    locale = QLocale(
+        QLocale.codeToLanguage(store.settings["language"], QLocale.LanguageCodeType.ISO639Part1)
+    )
+
     if part == "date":
-        return date.toString("dddd, MMMM dd, yyyy")
+        return locale.toString(date.date())
     elif part == "time":
-        return date.toString("h:mm AP")
+        return locale.toString(date.time())

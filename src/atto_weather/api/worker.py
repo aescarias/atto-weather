@@ -9,7 +9,7 @@ USER_AGENT = f"aescarias/atto-weather {app_version}"
 
 class WeatherWorkerSignals(QObject):
     errored = Signal(str, int)
-    fetched = Signal(dict)
+    fetched = Signal(dict, int)
 
 
 class WeatherWorker(QRunnable):
@@ -43,4 +43,6 @@ class WeatherWorker(QRunnable):
             self.signals.errored.emit(error["message"], error["code"])
             return
 
-        self.signals.fetched.emit(weather_rs.json())
+        self.signals.fetched.emit(
+            weather_rs.json(), int(weather_rs.headers["x-weatherapi-qpm-left"])
+        )

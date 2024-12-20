@@ -11,6 +11,7 @@ class Settings(TypedDict):
     pressure: Literal["mbar", "inhg"]
     height: Literal["mm", "in"]
     round_temp_values: bool
+    show_quota: bool
 
 
 class Secrets(TypedDict):
@@ -24,7 +25,10 @@ DEFAULT_SETTINGS = Settings(
     pressure="mbar",
     height="mm",
     round_temp_values=True,
+    show_quota=False,
 )
+
+DEFAULT_SECRETS = Secrets(weatherapi="")
 
 
 class BaseUISetting(TypedDict):
@@ -92,6 +96,7 @@ SETTINGS_FIELDS: dict[str, UISetting] = {
         },
     },
     "round_temp_values": {"label": "settings.round_temp_values", "kind": "check"},
+    "show_quota": {"label": "settings.show_remaining_quota", "kind": "check"},
 }
 
 SECRETS_FIELDS: dict[str, UISetting] = {

@@ -95,7 +95,7 @@ CURRENT_WEATHER_FIELDS: Mapping[str, WeatherField] = {
     "dew_point": {"label": "weather.dew_point", "template": {"value": "{dew_point}"}},
     "wind_speed": {
         "label": "weather.wind_speed",
-        "template": {"value": "{speed} @ {degree}° {direction} ({shorthand})"},
+        "template": {"value": "{speed} @ {degree}° {shorthand}\n({direction})"},
     },
     "wind_gust": {"label": "weather.wind_gust", "template": {"value": "{speed}"}},
     "humidity": {"label": "weather.humidity", "template": {"value": "{humidity}%"}},

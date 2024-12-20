@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 from atto_weather._version import __version__ as APP_VERSION
 from atto_weather.api.core import Forecast, WeatherInfo
 from atto_weather.api.worker import WeatherWorker
+from atto_weather.components.common import LocationLabel
 from atto_weather.components.panels import (
     CurrentWeatherPanel,
     ForecastOverviewPanel,
@@ -52,6 +53,7 @@ class AttoWeather(QMainWindow):
 
         self.location_edit = QLineEdit()
         self.location_edit.setPlaceholderText(lo("app.location_input_placeholder"))
+        self.location_edit.textChanged.connect(self.update_search_edit)
         self.weather_fetch_button = QPushButton(lo("app.find_button"))
         self.weather_fetch_button.clicked.connect(self.fetch_weather)
 
@@ -61,8 +63,8 @@ class AttoWeather(QMainWindow):
         # * Location Details
         self.location_layout = QHBoxLayout()
 
-        self.location_name_label = QLabel()
-        self.location_time_label = QLabel()
+        self.location_name_label = LocationLabel()
+        self.location_time_label = LocationLabel()
 
         # Only visible with hourly forecasts
         self.location_hour_select = QComboBox()
@@ -114,6 +116,9 @@ class AttoWeather(QMainWindow):
         self.attrib_label.setOpenExternalLinks(True)
         self.statusbar.addWidget(self.attrib_label, 1)
 
+        self.quota_label = QLabel()
+        self.statusbar.addWidget(self.quota_label)
+
         self.settings_button = QPushButton(lo("app.settings"))
         self.settings_button.clicked.connect(self.open_settings)
         self.statusbar.addWidget(self.settings_button)
@@ -122,10 +127,19 @@ class AttoWeather(QMainWindow):
         self.setCentralWidget(self.main_widget)
         self.setStatusBar(self.statusbar)
 
+        self.update_search_edit()
+
     @Slot()
     def open_settings(self) -> None:
         dlg = SettingsDialog()
         dlg.exec()
+
+    @Slot()
+    def update_search_edit(self) -> None:
+        if self.location_edit.text().strip():
+            self.weather_fetch_button.setEnabled(True)
+        else:
+            self.weather_fetch_button.setEnabled(False)
 
     @Slot(str, int)
     def handle_fetch_error(self, message: str, code: int) -> None:
@@ -159,13 +173,21 @@ class AttoWeather(QMainWindow):
         self.location_hour_select.addItems(items)
 
     @Slot(dict)
-    def update_weather(self, weather: dict[str, Any]) -> None:
+    def update_weather(self, weather: dict[str, Any], quota_left: int) -> None:
         self.weather_fetch_button.setEnabled(True)
 
         self.weather_data = WeatherInfo.from_dict(weather)
         self.app_stack.setCurrentWidget(self.current_weather)
 
-        self.location_name_label.setText(self.weather_data.location.full_name)
+        if store.settings["show_quota"]:
+            self.quota_label.setVisible(True)
+            self.quota_label.setText(lo("app.quota_left").format(quota=quota_left))
+        else:
+            self.quota_label.setVisible(False)
+            self.quota_label.setText("")
+
+        self.location_name_label.update_location(self.weather_data.location)
+        self.location_time_label.update_time(self.weather_data.location)
 
         self.location_time_label.setText(
             format_datetime(

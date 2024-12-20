@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Literal, Mapping, cast
 
+from atto_weather.api.core import Location
 from atto_weather.i18n import get_translation as lo
 from atto_weather.utils.fields import WeatherField
+from atto_weather.utils.text import format_datetime
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QPixmap
 from PySide6.QtWidgets import (
@@ -14,6 +16,29 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QWidget,
 )
+
+
+class LocationLabel(QLabel):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def update_location(self, location: Location) -> None:
+        self.setText(location.full_name)
+
+        elements = {
+            lo("app.name"): location.name,
+            lo("app.region"): location.region,
+            lo("app.country"): location.country,
+            lo("app.lat_lon"): ", ".join(
+                str(round(coord, 5)) for coord in [location.latitude, location.longitude] if coord
+            ),
+        }
+
+        self.setToolTip("\n".join(f"<b>{key}:</b> {val}\n" for key, val in elements.items() if val))
+
+    def update_time(self, location: Location) -> None:
+        self.setText(format_datetime(location.localtime_epoch, location.timezone_id, "date"))
+        self.setToolTip(f"{location.localtime_formatted} ({location.timezone_id})")
 
 
 class WeatherFieldWidget(QWidget):
@@ -58,8 +83,8 @@ class WeatherOverview(QWidget):
         self.date_label.setVisible(self.show_date)
 
         self.icon_label = QLabel()
-        self.temp_label = create_label(weight=QFont.Weight.Bold, point_size=16)
-        self.condition_label = QLabel()
+        self.temp_label = create_label(weight=QFont.Weight.Bold, point_size=18)
+        self.condition_label = create_label(point_size=14)
 
         self.wgt_layout.addWidget(self.icon_label, 0, 0, 2, 1)
         self.wgt_layout.addWidget(self.temp_label, 0, 1)

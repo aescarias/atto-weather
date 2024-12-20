@@ -16,6 +16,11 @@ no = "No"
 current_weather = "Current"
 forecast = "Forecast"
 average = "Average"
+name = "Name"
+region = "Region"
+country = "Country"
+lat_lon = "Lat/lon"
+quota_left = "{quota:,} requests remaining"
 
 [point16]
 north = "North"
@@ -119,6 +124,7 @@ waning_crescent = "Waning Crescent"
 
 [settings]
 round_temp_values = "Round temperature values to nearest whole number"
+show_remaining_quota = "Show remaining API request quota"
 weather_api_key = "WeatherAPI key"
 language = "Language"
 
