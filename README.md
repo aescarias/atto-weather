@@ -7,34 +7,33 @@ A really simple weather frontend.
 ## Features
 
 - Current weather information from dozens of locations
-- 3-day weather forecast with 24-hour details
-- Air quality & astronomy details
+- 3-day forecast with 24-hour weather data
+- Air quality and astronomy details
 
 *Weather data and icons courtesy of [WeatherAPI]*
 
-## Building
+## Installation
 
-No executable builds of Atto Weather are currently available.
+A Windows build for Atto Weather is available in [Releases](https://github.com/aescarias/atto-weather/releases).
 
-Clone this repository.
+To install Atto Weather from source, you will need a working copy of Python 3.9 or later.
+
+Clone the repository and create a virtual environment.
 
 ```sh
+# Clone the repository
 git clone https://github.com/aescarias/atto-weather
 cd atto-weather
+
+# Create and activate a virtual environment 
+# (use the appropriate 'python' command for your environment)
+python -m venv .venv
+
+source .venv/bin/activate # run this on Unix likes
+.venv/Scripts/activate # run this on Windows
 ```
 
-Create a virtual environment (Python 3.9 or later).
-
-```sh
-python -m venv .venv --prompt atto # make sure you use the right version!
-
-# then
-source .venv/bin/activate # on Unix likes
-# or
-.venv/Scripts/activate # on Windows
-```
-
-Once inside, install the required dependencies and run the application.
+Once activated, install the required dependencies and run the application.
 
 ```sh
 python -m pip install -e .
@@ -43,6 +42,6 @@ python -m atto_weather
 
 ## Setup
 
-Atto Weather uses [WeatherAPI] to provide its weather data. To use this service, you must acquire an API key. To do so, create an account at [WeatherAPI] then copy the "API Key" from the Dashboard. Enter this key into the prompt you see when first opening the app.
+Atto Weather uses [WeatherAPI] for its weather data. To use this service, you must acquire an API key. You can do this by creating an account and copying the "API key" from the Dashboard into the prompt you see when first opening the application.
 
 [WeatherAPI]: https://weatherapi.com
