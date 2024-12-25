@@ -56,6 +56,29 @@ class Location:
 
 
 @dataclass
+class AutocompleteResult:
+    ident: int
+    name: str
+    region: str
+    country: str
+    lat: float
+    lon: float
+    url: str
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Self:
+        data = deepcopy(data)
+
+        data["ident"] = data.pop("id")
+
+        return map_to_dataclass(cls, data)
+
+    @property
+    def full_name(self) -> str:
+        return ", ".join(comp for comp in [self.name, self.region, self.country] if comp)
+
+
+@dataclass
 class Temperature:
     celsius: float
     fahrenheit: float

@@ -11,7 +11,26 @@ from atto_weather.app import AttoWeather
 from atto_weather.i18n import set_language
 from atto_weather.store import load_secrets, load_settings, store, write_settings
 from atto_weather.utils.settings import DEFAULT_SETTINGS
-from atto_weather.windows.creds_required import CredentialsRequiredDialog
+from atto_weather.windows.setup_wizard import SetupWizard
+
+
+def run_wizard_if_setup_incomplete() -> None:
+    try:
+        store.secrets = load_secrets()
+        secrets_loaded = True
+    except FileNotFoundError:
+        secrets_loaded = False
+
+    locations = store.settings.get("locations", [])
+
+    if secrets_loaded and bool(locations):
+        return
+
+    wizard = SetupWizard()
+    code = wizard.exec()
+
+    if code == QDialog.DialogCode.Rejected:
+        raise SystemExit()
 
 
 def run() -> Never:
@@ -33,14 +52,7 @@ def run() -> Never:
         write_settings(store.settings)
 
     set_language(store.settings["language"])
-
-    try:
-        store.secrets = load_secrets()
-    except FileNotFoundError:
-        dlg = CredentialsRequiredDialog()
-
-        if dlg.exec() == QDialog.DialogCode.Rejected:
-            raise SystemExit()
+    run_wizard_if_setup_incomplete()
 
     window = AttoWeather()
     window.show()

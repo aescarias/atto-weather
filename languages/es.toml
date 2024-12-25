@@ -3,13 +3,11 @@ language = "Español"
 
 [app]
 location_input_placeholder = "Introducir nombre de ciudad, código postal, lat/lon o dirección IP"
-find_button = "Buscar"
+fetch_weather = "Buscar"
+manage_locations = "Administrar"
 powered_by = "Datos proveídos por <a href='https://www.weatherapi.com'>WeatherAPI.com</a>"                                                                                                                                                                                                                      # "Powered by" does not translate well literally 
 settings = "Configuración"
-weather_fetch_error = "No se pudo obtener el estado del tiempo"
-creds_required = "Credenciales necesarias"
-creds_required_details = "Bienvenido a Atto Weather! Para acceder al estado del tiempo, utilizamos los servicios de <a href='https://www.weatherapi.com/'>WeatherAPI</a> para el cual se requiere una clave de API.<br><br>Por favor, cree una cuenta y copie el 'API key' desde Dashboard al campo siguiente."
-enter_api_key = "Copie o introduzca su clave de API"
+fetch_error_title = "No se pudo obtener el estado del tiempo"
 confirm = "Confirmar"
 yes = "Sí"
 no = "No"
@@ -147,3 +145,40 @@ inhg = "Pulgadas de mercurio (inHg)"
 label = "Altura"
 millimeters = "Milimetros (mm)"
 inches = "Pulgadas (in)"
+
+[wizard.welcome]
+page = "Bienvenido a Atto Weather"
+details = "Este asistente te ayudará a configurar Atto Weather. Para empezar, por favor selecciona un idioma."
+
+[wizard.api_setup]
+details = """Atto Weather utiliza información de <a href='https://www.weatherapi.com'>WeatherAPI.com</a> para el cual se require una clave de API.<br><br>Registrese o ingrese a su cuenta y copie el campo de "API key" desde Dashboard al campo siguiente. Su clave de API luego será validada."""
+page = "Configuración de API"
+api_key = "Clave de API"
+
+status_validating = "Validando clave de API"
+status_valid = "La clave de API es valida."
+status_invalid = "La clave de API es invalida. Error {code}: {message}"
+
+[wizard.location_prompt]
+page = "Ubicaciones"
+details = "Atto Weather necesita que seleccione al menos una ubicación. ¿Desea añadir las ubicaciones manualmente?"
+manual = "Sí, deseo añadirlas manualmente."
+auto = "No, solo añadir mi ubicación actual."
+
+[wizard.location_manage]
+details = "Añada y administre sus ubicaciones aqui."
+
+[wizard.conclusion]
+page = "Configuración completada"
+details = "¡Ha configurado Atto Weather exitósamente!"
+
+[dialogs.add_location]
+title = "Añadir ubicación"
+add_button = "Añadir"
+
+[dialogs.location_manager]
+title = "Administrar ubicaciones"
+add_button = "Añadir"
+delete_button = "Eliminar"
+up_button = "Mover arriba"
+down_button = "Mover abajo"

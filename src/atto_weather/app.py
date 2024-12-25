@@ -6,9 +6,9 @@ from typing import Any
 from PySide6.QtCore import QThreadPool, Slot
 from PySide6.QtWidgets import (
     QComboBox,
+    QDialog,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QMainWindow,
     QMessageBox,
     QPushButton,
@@ -24,6 +24,7 @@ from atto_weather._version import __version__ as APP_VERSION
 from atto_weather.api.core import Forecast, WeatherInfo
 from atto_weather.api.worker import WeatherWorker
 from atto_weather.components.common import LocationLabel
+from atto_weather.components.locations import LocationManager, StoredLocationModel
 from atto_weather.components.panels import (
     CurrentWeatherPanel,
     ForecastOverviewPanel,
@@ -51,14 +52,19 @@ class AttoWeather(QMainWindow):
         # * Search Layout
         self.search_layout = QHBoxLayout()
 
-        self.location_edit = QLineEdit()
-        self.location_edit.setPlaceholderText(lo("app.location_input_placeholder"))
-        self.location_edit.textChanged.connect(self.update_search_edit)
-        self.weather_fetch_button = QPushButton(lo("app.find_button"))
-        self.weather_fetch_button.clicked.connect(self.fetch_weather)
+        self.location_select = QComboBox()
+        self.location_model = StoredLocationModel()
+        self.location_select.setModel(self.location_model)
 
-        self.search_layout.addWidget(self.location_edit)
-        self.search_layout.addWidget(self.weather_fetch_button)
+        self.manage_locations_button = QPushButton(lo("app.manage_locations"))
+        self.manage_locations_button.clicked.connect(self.open_location_manager)
+
+        self.fetch_weather_button = QPushButton(lo("app.fetch_weather"))
+        self.fetch_weather_button.clicked.connect(self.fetch_weather)
+
+        self.search_layout.addWidget(self.location_select, 1)
+        self.search_layout.addWidget(self.manage_locations_button)
+        self.search_layout.addWidget(self.fetch_weather_button)
 
         # * Location Details
         self.location_layout = QHBoxLayout()
@@ -127,7 +133,7 @@ class AttoWeather(QMainWindow):
         self.setCentralWidget(self.main_widget)
         self.setStatusBar(self.statusbar)
 
-        self.update_search_edit()
+        self.update_locations()
 
     @Slot()
     def open_settings(self) -> None:
@@ -135,16 +141,33 @@ class AttoWeather(QMainWindow):
         dlg.exec()
 
     @Slot()
-    def update_search_edit(self) -> None:
-        if self.location_edit.text().strip():
-            self.weather_fetch_button.setEnabled(True)
-        else:
-            self.weather_fetch_button.setEnabled(False)
+    def open_location_manager(self) -> None:
+        dlg = QDialog()
+        dlg.setWindowTitle(lo("dialogs.location_manager.title"))
+
+        vbox = QVBoxLayout()
+        vbox.setContentsMargins(0, 0, 0, 0)
+
+        manager = LocationManager()
+        vbox.addWidget(manager)
+        dlg.setLayout(vbox)
+
+        dlg.exec()
+        self.update_locations(self.location_select.currentIndex())
+
+    @Slot()
+    def update_locations(self, index_to_select: int = 0) -> None:
+        self.location_model.locations = store.settings.get("locations", [])
+        self.location_model.layoutChanged.emit()
+
+        if index_to_select < 0:
+            index_to_select %= self.location_model.rowCount()
+
+        self.location_select.setCurrentIndex(index_to_select)
 
     @Slot(str, int)
     def handle_fetch_error(self, message: str, code: int) -> None:
-        QMessageBox.critical(self, lo("app.weather_fetch_error"), f"WeatherAPI: {message} ({code})")
-        self.weather_fetch_button.setEnabled(True)
+        QMessageBox.critical(self, lo("app.fetch_error_title"), f"WeatherAPI: {message} ({code})")
 
     @Slot()
     def update_forecast(self) -> None:
@@ -174,8 +197,6 @@ class AttoWeather(QMainWindow):
 
     @Slot(dict)
     def update_weather(self, weather: dict[str, Any], quota_left: int) -> None:
-        self.weather_fetch_button.setEnabled(True)
-
         self.weather_data = WeatherInfo.from_dict(weather)
         self.app_stack.setCurrentWidget(self.current_weather)
 
@@ -236,12 +257,10 @@ class AttoWeather(QMainWindow):
 
     @Slot()
     def fetch_weather(self) -> None:
-        self.weather_fetch_button.setEnabled(False)
+        ident = self.location_model.locations[self.location_select.currentIndex()]
 
         worker = WeatherWorker(
-            self.location_edit.text(),
-            store.secrets["weatherapi"],
-            store.settings["language"],
+            "forecast", f"id:{ident}", store.secrets["weatherapi"], store.settings["language"]
         )
         worker.signals.fetched.connect(self.update_weather)
         worker.signals.errored.connect(self.handle_fetch_error)

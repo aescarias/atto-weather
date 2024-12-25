@@ -3,13 +3,11 @@ language = "English"
 
 [app]
 location_input_placeholder = "Enter city name, postal code, lat/lon, or IP address"
-find_button = "Find"
+fetch_weather = "Fetch"
+manage_locations = "Manage"
 powered_by = "Powered by <a href='https://www.weatherapi.com'>WeatherAPI.com</a>"
 settings = "Settings"
-weather_fetch_error = "Could not get weather data"
-creds_required = "Credentials required"
-creds_required_details = "Welcome to Atto Weather! To access weather data, we use <a href='https://www.weatherapi.com/'>WeatherAPI</a> for which you require an API key.<br><br>Please create an account and copy the 'API key' from the Dashboard into the field below."
-enter_api_key = "Copy or enter your API key here"
+fetch_error_title = "Could not get weather data"
 confirm = "Confirm"
 yes = "Yes"
 no = "No"
@@ -147,3 +145,40 @@ inhg = "Inches of mercury (inHg)"
 label = "Height"
 millimeters = "Millimeters (mm)"
 inches = "Inches (in)"
+
+[wizard.welcome]
+page = "Welcome to Atto Weather"
+details = "This wizard will guide you through setting up Atto Weather. Please start by selecting your language."
+
+[wizard.api_setup]
+details = """Atto Weather uses data from <a href='https://www.weatherapi.com'>WeatherAPI.com</a> for which you require an API key.<br><br>Register or log in to your account and copy the "API key" field from the Dashboard into the field below. Your API key will then be validated."""
+page = "API Setup"
+api_key = "API key"
+
+status_validating = "Validating API key"
+status_valid = "API key is valid."
+status_invalid = "API key is invalid. Error {code}: {message}"
+
+[wizard.location_prompt]
+page = "Locations"
+details = "Atto Weather needs you to select at least one location. Would you like to add locations manually?"
+manual = "Yes, I would like to add locations manually."
+auto = "No, only add my current location."
+
+[wizard.location_manage]
+details = "Add and manage your locations here."
+
+[wizard.conclusion]
+page = "Setup complete"
+details = "You have setup Atto Weather successfully!"
+
+[dialogs.add_location]
+title = "Add Location"
+add_button = "Add"
+
+[dialogs.location_manager]
+title = "Manage locations"
+add_button = "Add"
+delete_button = "Delete"
+up_button = "Move up"
+down_button = "Move down"

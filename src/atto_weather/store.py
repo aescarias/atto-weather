@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from atto_weather.utils.settings import Secrets, Settings
 
-SETTINGS_FILE = "settings.json"
-SECRETS_FILE = "secrets.json"
+SETTINGS_FILE = Path("settings.json")
+SECRETS_FILE = Path("secrets.json")
 
 
 class Store:
@@ -21,11 +22,12 @@ class Store:
     def settings(self) -> Settings:
         if self._settings is None:
             raise RuntimeError("Application did not load settings.")
+
         return self._settings
 
     @settings.setter
-    def settings(self, value: Settings) -> None:
-        self._settings = value
+    def settings(self, settings: Settings) -> None:
+        self._settings = settings
 
     @property
     def secrets(self) -> Secrets:
@@ -35,8 +37,8 @@ class Store:
         return self._secrets
 
     @secrets.setter
-    def secrets(self, value: Secrets) -> None:
-        self._secrets = value
+    def secrets(self, secrets: Secrets) -> None:
+        self._secrets = secrets
 
 
 store = Store()

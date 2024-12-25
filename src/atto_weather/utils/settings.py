@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Literal, TypeAlias, TypedDict
 
 from atto_weather.i18n import get_language_map
@@ -5,6 +7,7 @@ from typing_extensions import NotRequired
 
 
 class Settings(TypedDict):
+    locations: list[StoredLocation]
     language: str
     temperature: Literal["celsius", "fahrenheit"]
     distance: Literal["km", "mi"]
@@ -14,11 +17,17 @@ class Settings(TypedDict):
     show_quota: bool
 
 
+class StoredLocation(TypedDict):
+    name: str
+    ident: int
+
+
 class Secrets(TypedDict):
     weatherapi: str
 
 
 DEFAULT_SETTINGS = Settings(
+    locations=[],
     language="en",
     temperature="celsius",
     distance="km",

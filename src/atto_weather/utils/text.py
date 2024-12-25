@@ -67,4 +67,4 @@ def format_datetime(
     if part == "date":
         return locale.toString(date.date())
     elif part == "time":
-        return locale.toString(date.time())
+        return locale.toString(date.time(), "hh:mm ap")
