@@ -80,7 +80,6 @@ class WeatherOverview(QWidget):
         self.wgt_layout.setSpacing(10)
 
         self.date_label = QLabel()
-        self.date_label.setVisible(self.show_date)
 
         self.icon_label = QLabel()
         self.temp_label = create_label(weight=QFont.Weight.Bold, point_size=18)
@@ -100,6 +99,7 @@ class WeatherOverview(QWidget):
         self.wgt_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.setLayout(self.wgt_layout)
+        self.date_label.setVisible(self.show_date)
 
     def update_details(
         self, temperature: str, condition: str, icon: QPixmap, date: str | None = None
