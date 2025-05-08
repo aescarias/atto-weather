@@ -148,10 +148,10 @@ inches = "Pulgadas (in)"
 
 [wizard.welcome]
 page = "Bienvenido a Atto Weather"
-details = "Este asistente te ayudará a configurar Atto Weather. Para empezar, por favor selecciona un idioma."
+details = "Este asistente le ayudará a configurar Atto Weather. Para empezar, por favor selecciona un idioma."
 
 [wizard.api_setup]
-details = """Atto Weather utiliza información de <a href='https://www.weatherapi.com'>WeatherAPI.com</a> para el cual se require una clave de API.<br><br>Registrese o ingrese a su cuenta y copie el campo de "API key" desde Dashboard al campo siguiente. Su clave de API luego será validada."""
+details = """Atto Weather utiliza información de <a href='https://www.weatherapi.com'>WeatherAPI.com</a> para el cual se requiere una clave de API.<br><br>Registrese o ingrese a su cuenta y copie el campo de "API key" desde el panel principal al campo siguiente. Su clave de API luego será validada."""
 page = "Configuración de API"
 api_key = "Clave de API"
 
@@ -164,6 +164,10 @@ page = "Ubicaciones"
 details = "Atto Weather necesita que seleccione al menos una ubicación. ¿Desea añadir las ubicaciones manualmente?"
 manual = "Sí, deseo añadirlas manualmente."
 auto = "No, solo añadir mi ubicación actual."
+
+status_adding = "Añadiendo ubicación actual"
+status_success = "Ubicación añadida correctamente."
+status_failure = "No se pudo añadir la ubicación. Error {code}: {message}"
 
 [wizard.location_manage]
 details = "Añada y administre sus ubicaciones aqui."

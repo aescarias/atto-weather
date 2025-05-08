@@ -1,1 +1,1 @@
-from ._version import __version__ as __version__
+from ._self import APP_VERSION as APP_VERSION

@@ -1,7 +1,7 @@
 [project]
 name = "atto-weather"
 description = "A weather app using PySide6"
-authors = [{ name = "Angel Carias", email = "lotta.dev@outlook.com" }]
+authors = [{ name = "Ángel Carias", email = "lotta.dev@outlook.com" }]
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
@@ -16,8 +16,8 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "PySide6>=6.8.0",
-    "httpx>=0.27.0",
+    "PySide6>=6.9.0",
+    "httpx>=0.28.0",
     "tomli>=2.0.0",
     "typing-extensions>=4.11.0",
 ]
@@ -26,7 +26,7 @@ dependencies = [
 homepage = "https://github.com/aescarias/atto-weather"
 
 [project.optional-dependencies]
-dev = ["ruff>=0.4"]
+dev = ["ruff>=0.11"]
 
 [project.gui-scripts]
 atto_weather = "atto_weather.__main__:run"
@@ -43,8 +43,8 @@ select = ["F", "E", "I"]
 quote-style = "double"
 
 [tool.setuptools.dynamic]
-version = { attr = "atto_weather.__version__" }
+version = { attr = "atto_weather._self.APP_VERSION" }
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=70"]
 build-backend = "setuptools.build_meta"

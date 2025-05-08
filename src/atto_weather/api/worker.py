@@ -3,10 +3,11 @@ from __future__ import annotations
 from typing import Literal
 
 import httpx
-from atto_weather._version import __version__ as app_version
 from PySide6.QtCore import QObject, QRunnable, Signal, Slot
 
-USER_AGENT = f"aescarias/atto-weather {app_version}"
+from atto_weather._self import APP_VERSION
+
+USER_AGENT = f"aescarias/atto-weather {APP_VERSION}"
 
 
 class WeatherWorkerSignals(QObject):

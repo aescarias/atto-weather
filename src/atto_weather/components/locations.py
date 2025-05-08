@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from typing import Any
 
+from PySide6.QtCore import QAbstractListModel, QModelIndex, QObject, QPersistentModelIndex, Qt, Slot
+from PySide6.QtWidgets import QHBoxLayout, QListView, QPushButton, QVBoxLayout, QWidget
+from typing_extensions import TypeAlias
+
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store, write_settings
 from atto_weather.utils.settings import StoredLocation
 from atto_weather.windows.add_location import AddLocationDialog
-from PySide6.QtCore import QAbstractListModel, QModelIndex, QObject, QPersistentModelIndex, Qt, Slot
-from PySide6.QtWidgets import QHBoxLayout, QListView, QPushButton, QVBoxLayout, QWidget
-from typing_extensions import TypeAlias
 
 ModelIndex: TypeAlias = "QModelIndex | QPersistentModelIndex"
 

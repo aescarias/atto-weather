@@ -2,10 +2,6 @@ from __future__ import annotations
 
 from typing import Any, Literal, Mapping, cast
 
-from atto_weather.api.core import Location
-from atto_weather.i18n import get_translation as lo
-from atto_weather.utils.fields import WeatherField
-from atto_weather.utils.text import format_datetime
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QPixmap
 from PySide6.QtWidgets import (
@@ -16,6 +12,11 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QWidget,
 )
+
+from atto_weather.api.core import Location
+from atto_weather.i18n import get_translation as lo
+from atto_weather.utils.fields import WeatherField
+from atto_weather.utils.text import format_datetime
 
 
 class LocationLabel(QLabel):

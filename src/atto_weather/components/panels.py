@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from typing import Literal
 
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QListWidget, QListWidgetItem, QWidget
+
 from atto_weather.api.core import Astronomy, CurrentWeather, Forecast
 from atto_weather.components.common import WeatherOverview, get_weather_icon
 from atto_weather.components.current import AirQualityWidget, CurrentWeatherWidget
@@ -11,8 +14,6 @@ from atto_weather.components.forecast import (
     HourlyForecastWidget,
 )
 from atto_weather.utils.text import format_temperature
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGridLayout, QListWidget, QListWidgetItem, QWidget
 
 
 class CurrentWeatherPanel(QWidget):

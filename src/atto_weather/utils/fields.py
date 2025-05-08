@@ -1,7 +1,8 @@
 from typing import Mapping, TypedDict
 
-from atto_weather.i18n import get_translation as lo
 from typing_extensions import NotRequired
+
+from atto_weather.i18n import get_translation as lo
 
 
 class WeatherFieldTemplate(TypedDict):

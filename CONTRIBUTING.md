@@ -55,7 +55,6 @@ The scopes currently in use are:
 
 - `docs`: Documentation changes within code or associated resources.
 - `i18n`: Translations.
-- `tests`: Code coverage and unit testing.
 - `ui`: Changes to user interface.
 
 The commit types currently in use are:

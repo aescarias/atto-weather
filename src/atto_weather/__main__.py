@@ -5,8 +5,8 @@ from typing import Never
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication, QDialog
 
-from atto_weather import icons_rc  # noqa: F401
-from atto_weather._version import __version__ as app_version
+from atto_weather import icons_rc  # noqa: F401 -- resource file
+from atto_weather._self import APP_VERSION
 from atto_weather.app import AttoWeather
 from atto_weather.i18n import set_language
 from atto_weather.store import load_secrets, load_settings, store, write_settings
@@ -42,7 +42,7 @@ def run() -> Never:
         import ctypes
 
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-            f"aescarias.atto.weather.{app_version}"
+            f"aescarias.atto.weather.{APP_VERSION}"
         )
 
     try:

@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import Literal
 
+from PySide6.QtCore import QDateTime, QLocale, QTimeZone
+
 from atto_weather.api.core import Distance, Height, Pressure, Speed, Temperature
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store
-from PySide6.QtCore import QDateTime, QLocale, QTimeZone
 
 
 def format_temperature(temp: Temperature) -> str:

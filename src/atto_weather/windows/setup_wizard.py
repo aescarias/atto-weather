@@ -1,13 +1,8 @@
 from __future__ import annotations
 
 from enum import IntEnum
+from typing import Any
 
-from atto_weather.api.worker import WeatherWorker
-from atto_weather.components.locations import LocationManager
-from atto_weather.i18n import get_language_map, set_language
-from atto_weather.i18n import get_translation as lo
-from atto_weather.store import SECRETS_FILE, store, write_secrets, write_settings
-from atto_weather.utils.settings import DEFAULT_SECRETS
 from PySide6.QtCore import Qt, QThreadPool, QTimer, Slot
 from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import (
@@ -21,6 +16,15 @@ from PySide6.QtWidgets import (
     QWizard,
     QWizardPage,
 )
+
+from atto_weather._self import APP_NAME
+from atto_weather.api.core import AutocompleteResult
+from atto_weather.api.worker import WeatherWorker
+from atto_weather.components.locations import LocationManager
+from atto_weather.i18n import get_language_map, set_language
+from atto_weather.i18n import get_translation as lo
+from atto_weather.store import SECRETS_FILE, store, write_secrets, write_settings
+from atto_weather.utils.settings import DEFAULT_SECRETS, StoredLocation
 
 
 class PageId(IntEnum):
@@ -200,6 +204,8 @@ class LocationPromptPage(QWizardPage):
     def __init__(self) -> None:
         super().__init__()
 
+        self.pool = QThreadPool.globalInstance()
+
         self.setTitle(lo("wizard.location_prompt.page"))
 
         self.vbox = QVBoxLayout()
@@ -210,9 +216,12 @@ class LocationPromptPage(QWizardPage):
         self.location_auto_radio = QRadioButton(lo("wizard.location_prompt.auto"))
         self.location_auto_radio.setChecked(True)
 
+        self.status_label = QLabel()
+
         self.vbox.addWidget(self.info_label)
         self.vbox.addWidget(self.location_manual_radio)
         self.vbox.addWidget(self.location_auto_radio)
+        self.vbox.addWidget(self.status_label)
 
         self.setLayout(self.vbox)
         self.localize()
@@ -229,7 +238,69 @@ class LocationPromptPage(QWizardPage):
         if store.settings.get("locations"):
             return self.wizard().next()
 
-        return super().initializePage()
+        if self.wizard().hasVisitedPage(PageId.LOCATION_PROMPT):
+            return
+
+        # hook the "Next" button on visit
+        self.wizard().currentIdChanged.connect(self.setup_on_visit)
+
+    def check_prompt_on_next(self) -> None:
+        next_button = self.wizard().button(QWizard.WizardButton.NextButton)
+
+        next_button.clicked.disconnect()
+        next_button.clicked.connect(self.check_prompt)
+
+    def setup_on_visit(self, new_id: int) -> None:
+        if new_id == PageId.LOCATION_PROMPT:
+            self.check_prompt_on_next()
+
+    def check_prompt(self) -> None:
+        if not self.location_auto_radio.isChecked():
+            return self.wizard().next()
+
+        self.wizard().button(QWizard.WizardButton.NextButton).setDisabled(True)
+        self.status_label.setText(lo("wizard.location_prompt.status_adding"))
+
+        worker = WeatherWorker("search", "auto:ip", store.secrets["weatherapi"], "en")
+
+        worker.signals.fetched.connect(self.handle_success)
+        worker.signals.errored.connect(self.handle_failure)
+
+        self.pool.tryStart(worker)
+
+    @Slot(object)
+    def handle_success(self, results: list[dict[str, Any]]) -> None:
+        self.status_label.setText(lo("wizard.location_prompt.status_success"))
+
+        autocomplete = AutocompleteResult.from_dict(results[0])
+
+        location = StoredLocation(name=autocomplete.full_name, ident=autocomplete.ident)
+
+        store.settings["locations"].append(location)
+        write_settings(store.settings)
+
+        QTimer.singleShot(500, self._go_to_next_page)
+
+    @Slot(str, int)
+    def handle_failure(self, message: str, code: int) -> None:
+        self.status_label.setText(
+            lo("wizard.location_prompt.status_failure").format(code=code, message=message)
+        )
+
+    def _go_to_next_page(self) -> None:
+        self.cleanupPage()
+        self.wizard().next()
+
+    def cleanupPage(self) -> None:
+        """Disconnects the autocomplete logic from Next and resets to defaults."""
+        next_button = self.wizard().button(QWizard.WizardButton.NextButton)
+
+        next_button.clicked.disconnect()
+        next_button.clicked.connect(self._go_to_next_page)
+
+        self.status_label.setText("")
+
+        return super().cleanupPage()
 
     def nextId(self) -> int:
         if self.location_auto_radio.isChecked():
@@ -239,6 +310,8 @@ class LocationPromptPage(QWizardPage):
 
 
 class LocationManagePage(QWizardPage):
+    """The 'Manage Locations' page allows users to select their desired locations."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -264,6 +337,8 @@ class LocationManagePage(QWizardPage):
 
 
 class ConclusionPage(QWizardPage):
+    """The Conclusion page is the last page before the user enters the application."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -287,6 +362,7 @@ class SetupWizard(QWizard):
     def __init__(self) -> None:
         super().__init__()
 
+        self.setWindowTitle(APP_NAME)
         self.addPage(WelcomePage())
         self.addPage(APISetupPage())
         self.addPage(LocationPromptPage())
@@ -304,8 +380,8 @@ class SetupWizard(QWizard):
         if localize := getattr(page, "localize", None):
             localize()
 
-    def keyPressEvent(self, arg__1: QKeyEvent) -> None:
-        if arg__1.key() == Qt.Key.Key_Escape:
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key.Key_Escape:
             return
 
-        return super().keyPressEvent(arg__1)
+        return super().keyPressEvent(event)

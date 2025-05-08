@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Literal, TypeAlias, TypedDict
 
-from atto_weather.i18n import get_language_map
 from typing_extensions import NotRequired
+
+from atto_weather.i18n import get_language_map
 
 
 class Settings(TypedDict):

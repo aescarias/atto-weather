@@ -77,8 +77,9 @@ ENV/
 env.bak/
 venv.bak/
 
-# Secrets
+# Secrets and settings
 secrets.json
+settings.json
 
 # mypy
 .mypy_cache/

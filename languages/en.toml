@@ -165,6 +165,10 @@ details = "Atto Weather needs you to select at least one location. Would you lik
 manual = "Yes, I would like to add locations manually."
 auto = "No, only add my current location."
 
+status_adding = "Adding current location"
+status_success = "Successfully added location."
+status_failure = "Could not add location. Error {code}: {message}"
+
 [wizard.location_manage]
 details = "Add and manage your locations here."
 

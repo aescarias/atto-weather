@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from atto_weather._version import __version__ as APP_VERSION
+from atto_weather._self import APP_NAME, APP_VERSION
 from atto_weather.api.core import Forecast, WeatherInfo
 from atto_weather.api.worker import WeatherWorker
 from atto_weather.components.common import LocationLabel
@@ -43,7 +43,7 @@ class AttoWeather(QMainWindow):
         self.pool = QThreadPool()
         self.weather_data: WeatherInfo | None = None
 
-        self.setWindowTitle("Atto Weather")
+        self.setWindowTitle(APP_NAME)
 
         self.main_widget = QWidget()
 
