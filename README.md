@@ -6,7 +6,7 @@ A really simple weather frontend.
 
 ## Features
 
-- Current weather information from dozens of locations
+- Current weather conditions from dozens of locations
 - 3-day forecast with 24-hour weather data
 - Air quality and astronomy details
 
@@ -42,6 +42,8 @@ python -m atto_weather
 
 ## Setup
 
-Atto Weather uses [WeatherAPI] for its weather data. To use this service, you must acquire an API key. You can do this by creating an account and copying the "API key" from the Dashboard into the prompt you see when first opening the application.
+Atto Weather relies on [WeatherAPI] for its weather data. To use this service, you must acquire an API key. You can do this by creating an account on [WeatherAPI] and copying the "API key" from the Dashboard into the prompt you see when first opening the application.
+
+After validating your API key, you will be able to select locations and continue to the application.
 
 [WeatherAPI]: https://weatherapi.com
