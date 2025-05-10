@@ -3,11 +3,6 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from atto_weather.api.core import AutocompleteResult
-from atto_weather.api.worker import WeatherWorker
-from atto_weather.i18n import get_translation as lo
-from atto_weather.store import store, write_settings
-from atto_weather.utils.settings import StoredLocation
 from PySide6.QtCore import (
     QAbstractListModel,
     QModelIndex,
@@ -28,6 +23,12 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 from typing_extensions import TypeAlias
+
+from atto_weather.api.core import AutocompleteResult
+from atto_weather.api.worker import WeatherWorker
+from atto_weather.i18n import get_translation as lo
+from atto_weather.store import store, write_settings
+from atto_weather.utils.settings import StoredLocation
 
 logging.basicConfig()
 
@@ -137,9 +138,19 @@ class AddLocationDialog(QDialog):
         self.location_results_model.layoutChanged.emit()
 
         self.location_status_label.setHidden(False)
-        self.location_status_label.setText(f"{len(locations)} location(s) found")
+
+        if len(locations) == 0:
+            text = lo("dialogs.add_location.found_locations.zero")
+        elif len(locations) == 1:
+            text = lo("dialogs.add_location.found_locations.one")
+        else:
+            text = lo("dialogs.add_location.found_locations.many").format(number=len(locations))
+
+        self.location_status_label.setText(text)
 
     @Slot(str, int)
     def handle_failure(self, message: str, code: int) -> None:
         self.location_status_label.setHidden(False)
-        self.location_status_label.setText(f"API error: {message} ({code})")
+        self.location_status_label.setText(
+            lo("dialogs.add_location.error").format(message=message, code=code)
+        )

@@ -58,7 +58,7 @@ class WeatherWorker(QRunnable):
         elif self.kind == "search":
             weather_rs = self.run_search_request()
         else:
-            raise ValueError(f"invalid request kind: {self.kind!r}")
+            raise ValueError(f"Invalid request kind: {self.kind!r}")
 
         if weather_rs.is_error:
             error = weather_rs.json()["error"]

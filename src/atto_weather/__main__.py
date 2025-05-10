@@ -23,7 +23,7 @@ def run_wizard_if_setup_incomplete() -> None:
 
     locations = store.settings.get("locations", [])
 
-    if secrets_loaded and bool(locations):
+    if secrets_loaded and locations:
         return
 
     wizard = SetupWizard()

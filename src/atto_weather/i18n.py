@@ -10,7 +10,7 @@ logging.basicConfig()
 
 LOGGER = logging.getLogger(__name__)
 
-LANG_PATH = Path("languages")
+LANG_PATH = Path.cwd() / "languages"
 
 
 class InstalledLanguages(TypedDict):
@@ -28,9 +28,12 @@ installed_languages = InstalledLanguages(main=None, fallback=None)
 
 
 def load_language(lang: str) -> dict[str, Any]:
-    """Loads a language file with code ``lang`` into memory"""
-    lang_file = Path(LANG_PATH / f"{lang}.toml")
-    return tomli.loads(lang_file.read_text("utf-8-sig"))
+    """Loads a language file with code ``lang`` into memory."""
+
+    lang_file = LANG_PATH / f"{lang}.toml"
+    lang_data = lang_file.read_text("utf-8-sig")
+
+    return tomli.loads(lang_data)
 
 
 def get_language_map() -> dict[str, str]:

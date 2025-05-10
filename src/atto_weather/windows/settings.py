@@ -1,15 +1,6 @@
 from functools import partial
 from typing import cast
 
-from atto_weather.i18n import get_translation as lo
-from atto_weather.store import store, write_secrets, write_settings
-from atto_weather.utils.settings import (
-    DEFAULT_SECRETS,
-    DEFAULT_SETTINGS,
-    SECRETS_FIELDS,
-    SETTINGS_FIELDS,
-    SelectUISetting,
-)
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
@@ -24,6 +15,16 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QWidget,
+)
+
+from atto_weather.i18n import get_translation as lo
+from atto_weather.store import store, write_secrets, write_settings
+from atto_weather.utils.settings import (
+    DEFAULT_SECRETS,
+    DEFAULT_SETTINGS,
+    SECRETS_FIELDS,
+    SETTINGS_FIELDS,
+    SelectUISetting,
 )
 
 
@@ -125,8 +126,8 @@ class SettingsDialog(QDialog):
         if new is widget:  # gained focus
             widget.setEchoMode(QLineEdit.EchoMode.Normal)
 
-    def closeEvent(self, arg__1: QCloseEvent) -> None:
+    def closeEvent(self, event: QCloseEvent) -> None:
         write_secrets(store.secrets)
         write_settings(store.settings)
 
-        return super().closeEvent(arg__1)
+        return super().closeEvent(event)

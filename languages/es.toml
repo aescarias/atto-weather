@@ -179,6 +179,12 @@ details = "¡Ha configurado Atto Weather exitósamente!"
 [dialogs.add_location]
 title = "Añadir ubicación"
 add_button = "Añadir"
+error = "Error al buscar ubicaciones: {message} ({code})"
+
+[dialogs.add_location.found_locations]
+zero = "No se encontraron ubicaciones."
+one = "1 ubicación encontrada."
+many = "{number} ubicaciones encontradas."
 
 [dialogs.location_manager]
 title = "Administrar ubicaciones"
