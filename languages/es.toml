@@ -121,6 +121,8 @@ last_quarter = "Cuarto Menguante"
 waning_crescent = "Luna Menguante"
 
 [settings]
+general = "General"
+about = "Acerca de"
 round_temp_values = "Redondear valores de temperatura al entero más cercano"
 show_remaining_quota = "Mostrar cuota de peticiones a la API restantes"
 weather_api_key = "Clave de WeatherAPI"
@@ -179,6 +181,7 @@ details = "¡Ha configurado Atto Weather exitósamente!"
 [dialogs.add_location]
 title = "Añadir ubicación"
 add_button = "Añadir"
+searching = "Buscando"
 error = "Error al buscar ubicaciones: {message} ({code})"
 
 [dialogs.add_location.found_locations]

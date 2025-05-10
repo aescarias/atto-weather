@@ -121,6 +121,8 @@ last_quarter = "Last Quarter"
 waning_crescent = "Waning Crescent"
 
 [settings]
+general = "General"
+about = "About"
 round_temp_values = "Round temperature values to nearest whole number"
 show_remaining_quota = "Show remaining API request quota"
 weather_api_key = "WeatherAPI key"
@@ -179,6 +181,7 @@ details = "You have setup Atto Weather successfully!"
 [dialogs.add_location]
 title = "Add Location"
 add_button = "Add"
+searching = "Searching"
 error = "Error while searching locations: {message} ({code})"
 
 [dialogs.add_location.found_locations]

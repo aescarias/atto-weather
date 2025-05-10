@@ -71,7 +71,7 @@ class AddLocationDialog(QDialog):
 
         self.location_search_edit = QLineEdit()
         self.location_search_edit.setPlaceholderText(lo("app.location_input_placeholder"))
-        self.location_search_edit.textChanged.connect(self.debounce_timer.start)
+        self.location_search_edit.textChanged.connect(self.start_debounce)
 
         self.location_status_label = QLabel()
         self.location_status_label.setHidden(True)
@@ -96,6 +96,10 @@ class AddLocationDialog(QDialog):
         self.location_results_view.selectionModel().selectionChanged.connect(self.handle_selection)
 
         self.setLayout(self.main_layout)
+
+    def start_debounce(self) -> None:
+        self.debounce_timer.start()
+        self.location_status_label.setHidden(True)
 
     def handle_selection(self) -> None:
         self.add_location_button.setDisabled(False)
@@ -125,6 +129,9 @@ class AddLocationDialog(QDialog):
             "search", text, store.secrets["weatherapi"], store.settings["language"]
         )
 
+        self.location_status_label.setHidden(False)
+        self.location_status_label.setText(lo("dialogs.add_location.searching"))
+
         worker.signals.fetched.connect(self.handle_success)
         worker.signals.errored.connect(self.handle_failure)
 
@@ -136,8 +143,6 @@ class AddLocationDialog(QDialog):
             AutocompleteResult.from_dict(location) for location in locations
         ]
         self.location_results_model.layoutChanged.emit()
-
-        self.location_status_label.setHidden(False)
 
         if len(locations) == 0:
             text = lo("dialogs.add_location.found_locations.zero")
