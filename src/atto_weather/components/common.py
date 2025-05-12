@@ -26,16 +26,19 @@ class LocationLabel(QLabel):
     def update_location(self, location: Location) -> None:
         self.setText(location.full_name)
 
+        lat = round(location.latitude, 5)
+        lon = round(location.longitude, 5)
+
         elements = {
             lo("app.name"): location.name,
             lo("app.region"): location.region,
             lo("app.country"): location.country,
-            lo("app.lat_lon"): ", ".join(
-                str(round(coord, 5)) for coord in [location.latitude, location.longitude] if coord
-            ),
+            lo("app.lat_lon"): f"{lat}, {lon}",
         }
 
-        self.setToolTip("\n".join(f"<b>{key}:</b> {val}\n" for key, val in elements.items() if val))
+        self.setToolTip(
+            "<br>".join(f"<b>{key}:</b> {val}\n" for key, val in elements.items() if val)
+        )
 
     def update_time(self, location: Location) -> None:
         self.setText(format_datetime(location.localtime_epoch, location.timezone_id, "date"))

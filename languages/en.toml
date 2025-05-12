@@ -125,6 +125,7 @@ general = "General"
 about = "About"
 round_temp_values = "Round temperature values to nearest whole number"
 show_remaining_quota = "Show remaining API request quota"
+time_24_hour = "Use 24 hour format"
 weather_api_key = "WeatherAPI key"
 language = "Language"
 

@@ -185,8 +185,13 @@ class AttoWeather(QMainWindow):
         self.location_hour_select.setVisible(True)
         self.location_hour_select.clear()
 
+        if store.settings.get("time_24_hour"):
+            time_ind = "time-24"
+        else:
+            time_ind = "time-12"
+
         items = [lo("app.average")] + [
-            format_datetime(hour.time_epoch, self.weather_data.location.timezone_id, "time")
+            format_datetime(hour.time_epoch, self.weather_data.location.timezone_id, time_ind)
             for hour in forecast.hours
         ]
 

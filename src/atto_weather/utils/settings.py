@@ -16,6 +16,7 @@ class Settings(TypedDict):
     height: Literal["mm", "in"]
     round_temp_values: bool
     show_quota: bool
+    time_24_hour: bool
 
 
 class StoredLocation(TypedDict):
@@ -36,6 +37,7 @@ DEFAULT_SETTINGS = Settings(
     height="mm",
     round_temp_values=True,
     show_quota=False,
+    time_24_hour=False,
 )
 
 DEFAULT_SECRETS = Secrets(weatherapi="")
@@ -107,6 +109,7 @@ SETTINGS_FIELDS: dict[str, UISetting] = {
     },
     "round_temp_values": {"label": "settings.round_temp_values", "kind": "check"},
     "show_quota": {"label": "settings.show_remaining_quota", "kind": "check"},
+    "time_24_hour": {"label": "settings.time_24_hour", "kind": "check"},
 }
 
 SECRETS_FIELDS: dict[str, UISetting] = {

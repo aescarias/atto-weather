@@ -54,7 +54,7 @@ def format_boolean(boolean: bool) -> str:
 
 
 def format_datetime(
-    epoch: int, timezone: str | Literal["UTC"], part: Literal["date", "time"]
+    epoch: int, timezone: str | Literal["UTC"], part: Literal["date", "time-12", "time-24"]
 ) -> str:
     if timezone == "UTC":
         date = QDateTime.fromSecsSinceEpoch(epoch, QTimeZone.Initialization.UTC)
@@ -67,5 +67,7 @@ def format_datetime(
 
     if part == "date":
         return locale.toString(date.date())
-    elif part == "time":
+    elif part == "time-12":
         return locale.toString(date.time(), "hh:mm ap")
+    elif part == "time-24":
+        return locale.toString(date.time(), "hh:mm")
