@@ -32,7 +32,7 @@ from atto_weather.components.panels import (
 )
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store
-from atto_weather.utils.text import format_datetime
+from atto_weather.utils.text import format_unix_datetime
 from atto_weather.windows.settings import SettingsDialog
 
 
@@ -181,17 +181,12 @@ class AttoWeather(QMainWindow):
 
         self.day_forecast.update_daily_details(forecast)
 
-        self.location_time_label.setText(format_datetime(forecast.date_epoch, "UTC", "date"))
+        self.location_time_label.setText(format_unix_datetime(forecast.date_epoch, "UTC", "date"))
         self.location_hour_select.setVisible(True)
         self.location_hour_select.clear()
 
-        if store.settings.get("time_24_hour"):
-            time_ind = "time-24"
-        else:
-            time_ind = "time-12"
-
         items = [lo("app.average")] + [
-            format_datetime(hour.time_epoch, self.weather_data.location.timezone_id, time_ind)
+            format_unix_datetime(hour.time_epoch, self.weather_data.location.timezone_id, "time")
             for hour in forecast.hours
         ]
 
@@ -216,7 +211,7 @@ class AttoWeather(QMainWindow):
         self.location_time_label.update_time(self.weather_data.location)
 
         self.location_time_label.setText(
-            format_datetime(
+            format_unix_datetime(
                 self.weather_data.location.localtime_epoch,
                 self.weather_data.location.timezone_id,
                 "date",
@@ -244,7 +239,7 @@ class AttoWeather(QMainWindow):
         self.location_hour_select.setVisible(False)
         self.app_stack.setCurrentWidget(self.current_weather)
         self.location_time_label.setText(
-            format_datetime(
+            format_unix_datetime(
                 self.weather_data.location.localtime_epoch,
                 self.weather_data.location.timezone_id,
                 "date",

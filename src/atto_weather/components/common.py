@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 from atto_weather.api.core import Location
 from atto_weather.i18n import get_translation as lo
 from atto_weather.utils.fields import WeatherField
-from atto_weather.utils.text import format_datetime
+from atto_weather.utils.text import format_unix_datetime
 
 
 class LocationLabel(QLabel):
@@ -41,8 +41,11 @@ class LocationLabel(QLabel):
         )
 
     def update_time(self, location: Location) -> None:
-        self.setText(format_datetime(location.localtime_epoch, location.timezone_id, "date"))
-        self.setToolTip(f"{location.localtime_formatted} ({location.timezone_id})")
+        date = format_unix_datetime(location.localtime_epoch, location.timezone_id, "date")
+        time = format_unix_datetime(location.localtime_epoch, location.timezone_id, "time")
+
+        self.setText(date)
+        self.setToolTip(f"{date}\n{time}\n{location.timezone_id}")
 
 
 class WeatherFieldWidget(QWidget):

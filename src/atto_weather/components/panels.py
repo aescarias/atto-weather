@@ -13,7 +13,7 @@ from atto_weather.components.forecast import (
     DailyForecastWidget,
     HourlyForecastWidget,
 )
-from atto_weather.utils.text import format_temperature
+from atto_weather.utils.text import format_iso8601, format_temperature
 
 
 class CurrentWeatherPanel(QWidget):
@@ -69,7 +69,7 @@ class ForecastOverviewPanel(QListWidget):
                 format_temperature(date.day.avg_temperature),
                 date.day.condition.text,
                 get_weather_icon(date.day.condition.code, True),
-                date.date_formatted,
+                format_iso8601(date.date_formatted, "date"),
             )
 
             item = QListWidgetItem()

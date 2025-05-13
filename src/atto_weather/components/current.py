@@ -28,7 +28,7 @@ class CurrentWeatherWidget(WeatherFieldWidget):
         super().__init__(CURRENT_WEATHER_FIELDS, "grid")
 
     def update_details(self, current: CurrentWeather, *, _aqi: bool = True) -> None:
-        self.set_label("feels_like", feels_like=format_temperature(current.temperature))
+        self.set_label("feels_like", feels_like=format_temperature(current.feels_like))
         self.set_label("windchill", windchill=format_temperature(current.windchill))
         self.set_label("heat_index", heat_index=format_temperature(current.heat_index))
         self.set_label("dew_point", dew_point=format_temperature(current.dew_point))

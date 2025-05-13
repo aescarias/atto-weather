@@ -155,7 +155,7 @@ DAILY_FORECAST_FIELDS: Mapping[str, WeatherField] = {
     },
     "max_wind": {"label": "forecast.max_wind", "template": {"value": "{speed}"}},
     "precipitation": {"label": "weather.precipitation", "template": {"value": "{height}"}},
-    "snowfall": {"label": "forecast.snowfall", "template": {"value": "{height}"}},
+    "snowfall": {"label": "forecast.snowfall", "template": {"value": "{height} cm"}},
     "avg_visibility": {
         "label": "forecast.avg_visibility",
         "template": {"value": "{distance}"},

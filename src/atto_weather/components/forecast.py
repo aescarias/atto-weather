@@ -12,6 +12,7 @@ from atto_weather.utils.fields import (
     estimate_uv_index,
 )
 from atto_weather.utils.text import (
+    format_am_pm,
     format_boolean,
     format_distance,
     format_height,
@@ -87,9 +88,20 @@ class AstronomyWidget(WeatherFieldWidget):
         super().__init__(ASTRONOMY_FIELDS, "grid")
 
     def update_details(self, astro: Astronomy) -> None:
-        self.set_label("sunrise", value=astro.sunrise)
-        self.set_label("sunset", value=astro.sunset)
-        self.set_label("moonrise", value=astro.moonrise)
-        self.set_label("moonset", value=astro.moonset)
+        # According to the docs, these values should be provided in
+        # 'hh:mm ap' format. e.g. "4:00 PM".
+        self.set_label("sunrise", value=format_astro_value(astro.sunrise))
+        self.set_label("sunset", value=format_astro_value(astro.sunset))
+        self.set_label("moonrise", value=format_astro_value(astro.moonrise))
+        self.set_label("moonset", value=format_astro_value(astro.moonset))
+
         self.set_label("moon_phase", phase=lo(MOON_PHASE[astro.moon_phase]))
         self.set_label("moon_illum", illum=astro.moon_illumination)
+
+
+def format_astro_value(timestr: str) -> str:
+    try:
+        return format_am_pm(timestr)
+    except ValueError:
+        # the API likely returned a value such as "no moonrise"
+        return lo("app.not_applicable")

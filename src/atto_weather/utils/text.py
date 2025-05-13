@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from PySide6.QtCore import QDateTime, QLocale, QTimeZone
+from PySide6.QtCore import QDateTime, QLocale, Qt, QTimeZone
 
 from atto_weather.api.core import Distance, Height, Pressure, Speed, Temperature
 from atto_weather.i18n import get_translation as lo
@@ -53,13 +53,13 @@ def format_boolean(boolean: bool) -> str:
     return lo("app.yes") if boolean else lo("app.no")
 
 
-def format_datetime(
-    epoch: int, timezone: str | Literal["UTC"], part: Literal["date", "time-12", "time-24"]
+def format_unix_datetime(
+    unix: int, timezone: str | Literal["UTC"], part: Literal["date", "time"]
 ) -> str:
     if timezone == "UTC":
-        date = QDateTime.fromSecsSinceEpoch(epoch, QTimeZone.Initialization.UTC)
+        date = QDateTime.fromSecsSinceEpoch(unix, QTimeZone.Initialization.UTC)
     else:
-        date = QDateTime.fromSecsSinceEpoch(epoch, QTimeZone(timezone.encode()))
+        date = QDateTime.fromSecsSinceEpoch(unix, QTimeZone(timezone.encode()))
 
     locale = QLocale(
         QLocale.codeToLanguage(store.settings["language"], QLocale.LanguageCodeType.ISO639Part1)
@@ -67,7 +67,26 @@ def format_datetime(
 
     if part == "date":
         return locale.toString(date.date())
-    elif part == "time-12":
+    elif part == "time":
+        if store.settings.get("time_24_hour"):
+            return locale.toString(date.time(), "hh:mm")
+
         return locale.toString(date.time(), "hh:mm ap")
-    elif part == "time-24":
-        return locale.toString(date.time(), "hh:mm")
+
+
+def format_am_pm(timestr: str) -> str:
+    date = QDateTime.fromString(timestr, "hh:mm ap")
+
+    if not date.isValid():
+        raise ValueError(f"Invalid time string: {timestr!r}")
+
+    return format_unix_datetime(date.toSecsSinceEpoch(), date.timeZone().id().toStdString(), "time")
+
+
+def format_iso8601(datestr: str, part: Literal["date", "time"]) -> str:
+    date = QDateTime.fromString(datestr, Qt.DateFormat.ISODate)
+
+    if not date.isValid():
+        raise ValueError(f"Invalid date string: {datestr!r}")
+
+    return format_unix_datetime(date.toSecsSinceEpoch(), date.timeZone().id().toStdString(), part)
