@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from atto_weather._self import APP_NAME, APP_VERSION
+from atto_weather._self import APP_COPYRIGHT, APP_NAME, APP_VERSION
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store, write_secrets, write_settings
 from atto_weather.utils.settings import (
@@ -84,10 +84,15 @@ class AboutTab(QWidget):
         self.app_version_label = QLabel(APP_VERSION)
         self.app_version_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        self.app_rights_label = QLabel(APP_COPYRIGHT)
+        self.app_rights_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         self.links_label = QLabel(
-            "<a href='https://github.com/aescarias/atto-weather'>Github</a>"
-            "<br><br>"
-            "Powered by <a href='https://weatherapi.com'>WeatherAPI</a>"
+            f"""
+            <a href='https://github.com/aescarias/atto-weather'>Github</a>
+            <br><br>
+            {lo("app.powered_by")}
+            """
         )
         self.links_label.setOpenExternalLinks(True)
         self.links_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -95,6 +100,7 @@ class AboutTab(QWidget):
         self.vbox.addWidget(self.image_label)
         self.vbox.addWidget(self.app_name_label)
         self.vbox.addWidget(self.app_version_label)
+        self.vbox.addWidget(self.app_rights_label)
         self.vbox.addWidget(self.links_label)
 
         self.setLayout(self.vbox)

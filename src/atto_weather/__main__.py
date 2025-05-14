@@ -3,12 +3,12 @@ from __future__ import annotations
 from typing import Never
 
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QApplication, QDialog
+from PySide6.QtWidgets import QApplication, QDialog, QMessageBox, QWidget
 
 from atto_weather import icons_rc  # noqa: F401 -- resource file
 from atto_weather._self import APP_VERSION
 from atto_weather.app import AttoWeather
-from atto_weather.i18n import set_language
+from atto_weather.i18n import LanguageError, set_language
 from atto_weather.store import load_secrets, load_settings, store, write_settings
 from atto_weather.utils.settings import DEFAULT_SETTINGS
 from atto_weather.windows.setup_wizard import SetupWizard
@@ -51,7 +51,12 @@ def run() -> Never:
         store.settings = DEFAULT_SETTINGS
         write_settings(store.settings)
 
-    set_language(store.settings["language"])
+    try:
+        set_language(store.settings["language"])
+    except LanguageError as err:
+        QMessageBox.critical(QWidget(), "Error", str(err))
+        raise SystemExit(1)
+
     run_wizard_if_setup_incomplete()
 
     window = AttoWeather()
