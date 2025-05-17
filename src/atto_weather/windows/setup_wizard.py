@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QMessageBox,
     QRadioButton,
     QVBoxLayout,
     QWidget,
@@ -25,6 +26,7 @@ from atto_weather.i18n import get_language_map, set_language
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import SECRETS_FILE, store, write_secrets, write_settings
 from atto_weather.utils.settings import DEFAULT_SECRETS, StoredLocation
+from atto_weather.utils.text import format_api_error
 
 
 class PageId(IntEnum):
@@ -64,7 +66,6 @@ class WelcomePage(QWizardPage):
         self.setLayout(self.vbox)
 
         self.registerField("language", self.language_select, "currentText", "currentTextChanged")
-
         self.localize()
 
     def localize(self) -> None:
@@ -154,7 +155,8 @@ class APISetupPage(QWizardPage):
         worker = WeatherWorker("forecast", "auto:ip", self.field("apikey"), "en")
 
         worker.signals.fetched.connect(self.handle_valid_key)
-        worker.signals.errored.connect(self.handle_invalid_key)
+        worker.signals.api_errored.connect(self.handle_invalid_key)
+        worker.signals.request_errored.connect(self.handle_request_error)
 
         self.pool.tryStart(worker)
 
@@ -171,8 +173,12 @@ class APISetupPage(QWizardPage):
     @Slot(str, int)
     def handle_invalid_key(self, message: str, code: int) -> None:
         self.status_label.setText(
-            lo("wizard.api_setup.status_invalid").format(code=code, message=message)
+            format_api_error(code, message, template="wizard.api_setup.status_invalid")
         )
+
+    @Slot(str, str)
+    def handle_request_error(self, class_name: str, message: str) -> None:
+        self.status_label.setText(f"{class_name}: {message}")
 
     def _go_to_next_page(self) -> None:
         # QWizard does not perform cleanup when going to the next page
@@ -264,7 +270,8 @@ class LocationPromptPage(QWizardPage):
         worker = WeatherWorker("search", "auto:ip", store.secrets["weatherapi"], "en")
 
         worker.signals.fetched.connect(self.handle_success)
-        worker.signals.errored.connect(self.handle_failure)
+        worker.signals.api_errored.connect(self.handle_api_failure)
+        worker.signals.request_errored.connect(self.handle_request_failure)
 
         self.pool.tryStart(worker)
 
@@ -282,10 +289,16 @@ class LocationPromptPage(QWizardPage):
         QTimer.singleShot(500, self._go_to_next_page)
 
     @Slot(str, int)
-    def handle_failure(self, message: str, code: int) -> None:
+    def handle_api_failure(self, message: str, code: int) -> None:
         self.status_label.setText(
             lo("wizard.location_prompt.status_failure").format(code=code, message=message)
         )
+        self.wizard().button(QWizard.WizardButton.NextButton).setDisabled(False)
+
+    @Slot(str, str)
+    def handle_request_failure(self, class_name: str, message: str) -> None:
+        self.status_label.setText(f"{class_name}: {message}")
+        self.wizard().button(QWizard.WizardButton.NextButton).setDisabled(False)
 
     def _go_to_next_page(self) -> None:
         self.cleanupPage()
@@ -331,6 +344,46 @@ class LocationManagePage(QWizardPage):
         self.setTitle(lo("wizard.location_prompt.page"))
         self.info_label.setText(lo("wizard.location_manage.details"))
         self.manager.localize()
+
+    def initializePage(self) -> None:
+        if self.wizard().hasVisitedPage(PageId.LOCATION_MANAGE):
+            return
+
+        # hook the "Next" button on visit
+        self.wizard().currentIdChanged.connect(self.setup_on_visit)
+
+    def check_prompt_on_next(self) -> None:
+        next_button = self.wizard().button(QWizard.WizardButton.NextButton)
+
+        next_button.clicked.disconnect()
+        next_button.clicked.connect(self.check_prompt)
+
+    def setup_on_visit(self, new_id: int) -> None:
+        if new_id == PageId.LOCATION_MANAGE:
+            self.check_prompt_on_next()
+
+    def check_prompt(self) -> None:
+        if self.manager.locations_model.rowCount() >= 1:
+            self._go_to_next_page()
+        else:
+            QMessageBox.critical(
+                self,
+                lo("dialogs.location_manager.required_title"),
+                lo("dialogs.location_manager.required_message"),
+            )
+
+    def _go_to_next_page(self) -> None:
+        self.cleanupPage()
+        self.wizard().next()
+
+    def cleanupPage(self) -> None:
+        """Disconnects the autocomplete logic from Next and resets to defaults."""
+        next_button = self.wizard().button(QWizard.WizardButton.NextButton)
+
+        next_button.clicked.disconnect()
+        next_button.clicked.connect(self._go_to_next_page)
+
+        return super().cleanupPage()
 
     def nextId(self) -> int:
         return PageId.CONCLUSION

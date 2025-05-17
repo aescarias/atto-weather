@@ -6,8 +6,6 @@ from typing import Any, TypedDict
 
 import tomli
 
-logging.basicConfig()
-
 LOGGER = logging.getLogger(__name__)
 
 LANG_PATH = Path.cwd() / "languages"

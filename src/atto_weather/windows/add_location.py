@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from typing import Any
 
 from PySide6.QtCore import (
@@ -29,10 +28,6 @@ from atto_weather.api.worker import WeatherWorker
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store, write_settings
 from atto_weather.utils.settings import StoredLocation
-
-logging.basicConfig()
-
-LOGGER = logging.getLogger(__name__)
 
 ModelIndex: TypeAlias = "QModelIndex | QPersistentModelIndex"
 
@@ -133,7 +128,8 @@ class AddLocationDialog(QDialog):
         self.location_status_label.setText(lo("dialogs.add_location.searching"))
 
         worker.signals.fetched.connect(self.handle_success)
-        worker.signals.errored.connect(self.handle_failure)
+        worker.signals.api_errored.connect(self.handle_api_failure)
+        worker.signals.request_errored.connect(self.handle_request_failure)
 
         self.pool.tryStart(worker)
 
@@ -154,8 +150,13 @@ class AddLocationDialog(QDialog):
         self.location_status_label.setText(text)
 
     @Slot(str, int)
-    def handle_failure(self, message: str, code: int) -> None:
+    def handle_api_failure(self, message: str, code: int) -> None:
         self.location_status_label.setHidden(False)
         self.location_status_label.setText(
             lo("dialogs.add_location.error").format(message=message, code=code)
         )
+
+    @Slot(str, str)
+    def handle_request_failure(self, class_name: str, message: str) -> None:
+        self.location_status_label.setHidden(False)
+        self.location_status_label.setText(f"{class_name}: {message}")

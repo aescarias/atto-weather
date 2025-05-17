@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+from json import JSONDecodeError
 from typing import Literal
 
 import httpx
@@ -9,9 +11,12 @@ from atto_weather._self import APP_VERSION
 
 USER_AGENT = f"aescarias/atto-weather {APP_VERSION}"
 
+LOGGER = logging.getLogger(__name__)
+
 
 class WeatherWorkerSignals(QObject):
-    errored = Signal(str, int)
+    api_errored = Signal(str, int)
+    request_errored = Signal(str, str)
     fetched = Signal(object, int)
 
 
@@ -37,7 +42,7 @@ class WeatherWorker(QRunnable):
             params={
                 "key": self.api_key,
                 "q": self.query,
-                "days": 3,
+                "days": 14,  # max allowed, api should take care of this according to plan
                 "aqi": "yes",
                 "lang": self.lang,
             },
@@ -53,17 +58,26 @@ class WeatherWorker(QRunnable):
 
     @Slot()
     def run(self) -> None:
-        if self.kind == "forecast":
-            weather_rs = self.run_forecast_request()
-        elif self.kind == "search":
-            weather_rs = self.run_search_request()
-        else:
-            raise ValueError(f"Invalid request kind: {self.kind!r}")
+        try:
+            if self.kind == "forecast":
+                weather_rs = self.run_forecast_request()
+            elif self.kind == "search":
+                weather_rs = self.run_search_request()
+            else:
+                raise ValueError(f"Invalid request kind: {self.kind!r}")
+        except httpx.RequestError as exc:
+            LOGGER.exception(exc)
+            self.signals.request_errored.emit(exc.__class__.__name__, str(exc))
+            return
 
         if weather_rs.is_error:
-            error = weather_rs.json()["error"]
-            self.signals.errored.emit(error["message"], error["code"])
+            exc = weather_rs.json()["error"]
+            self.signals.api_errored.emit(exc["message"], exc["code"])
             return
 
         quota_left = int(weather_rs.headers["x-weatherapi-qpm-left"])
-        self.signals.fetched.emit(weather_rs.json(), quota_left)
+        try:
+            self.signals.fetched.emit(weather_rs.json(), quota_left)
+        except JSONDecodeError as exc:
+            LOGGER.exception(exc)
+            self.signals.request_errored.emit(exc.__class__.__name__, str(exc))

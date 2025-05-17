@@ -90,3 +90,21 @@ def format_iso8601(datestr: str, part: Literal["date", "time"]) -> str:
         raise ValueError(f"Invalid date string: {datestr!r}")
 
     return format_unix_datetime(date.toSecsSinceEpoch(), date.timeZone().id().toStdString(), part)
+
+
+CODES = {
+    2006: "api_errors.key_invalid",
+    2007: "api_errors.exceeded_quota",
+    2008: "api_errors.key_disabled",
+    2009: "api_errors.missing_access",
+    9999: "api_errors.internal_error",
+}
+
+
+def format_api_error(
+    code: int, fallback_message: str, *, template: str = "api_errors.error_format"
+) -> str:
+    if (localizer := CODES.get(code)) is not None:
+        return lo(template).format(code=code, message=lo(localizer))
+
+    return lo(template).format(code=code, message=fallback_message)

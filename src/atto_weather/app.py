@@ -3,7 +3,7 @@ from __future__ import annotations
 from functools import partial
 from typing import Any
 
-from PySide6.QtCore import QThreadPool, Slot
+from PySide6.QtCore import QThreadPool, QTimer, Slot
 from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
@@ -32,7 +32,7 @@ from atto_weather.components.panels import (
 )
 from atto_weather.i18n import get_translation as lo
 from atto_weather.store import store
-from atto_weather.utils.text import format_unix_datetime
+from atto_weather.utils.text import format_api_error, format_unix_datetime
 from atto_weather.windows.settings import SettingsDialog
 
 
@@ -89,12 +89,14 @@ class AttoWeather(QMainWindow):
         self.show_forecast_button = QPushButton(lo("app.forecast"))
         self.show_current_button.clicked.connect(self.show_current)
         self.show_forecast_button.clicked.connect(self.show_forecast)
+        self.fetch_status_label = QLabel()
 
         self.actions_layout.addWidget(self.show_current_button)
         self.actions_layout.addWidget(self.show_forecast_button)
         self.actions_layout.addSpacerItem(
             QSpacerItem(50, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum),
         )
+        self.actions_layout.addWidget(self.fetch_status_label)
 
         # * App Info Stack
         self.app_stack = QStackedWidget()
@@ -166,8 +168,17 @@ class AttoWeather(QMainWindow):
         self.location_select.setCurrentIndex(index_to_select)
 
     @Slot(str, int)
-    def handle_fetch_error(self, message: str, code: int) -> None:
-        QMessageBox.critical(self, lo("app.fetch_error_title"), f"WeatherAPI: {message} ({code})")
+    def handle_api_error(self, message: str, code: int) -> None:
+        self.fetch_status_label.setText("")
+
+        QMessageBox.critical(
+            self, lo("app.fetch_error_title"), f"WeatherAPI: {format_api_error(code, message)}"
+        )
+
+    @Slot(str, str)
+    def handle_request_error(self, class_name: str, message: str) -> None:
+        self.fetch_status_label.setText("")
+        QMessageBox.critical(self, lo("app.fetch_error_title"), f"{class_name}: {message}")
 
     @Slot()
     def update_forecast(self) -> None:
@@ -197,6 +208,9 @@ class AttoWeather(QMainWindow):
 
     @Slot(dict)
     def update_weather(self, weather: dict[str, Any], quota_left: int) -> None:
+        self.fetch_status_label.setText(lo("app.status_done"))
+        QTimer.singleShot(1000, partial(self.fetch_status_label.setText, ""))
+
         self.weather_data = WeatherInfo.from_dict(weather)
         self.app_stack.setCurrentWidget(self.current_weather)
 
@@ -263,6 +277,8 @@ class AttoWeather(QMainWindow):
             "forecast", f"id:{ident}", store.secrets["weatherapi"], store.settings["language"]
         )
         worker.signals.fetched.connect(self.update_weather)
-        worker.signals.errored.connect(self.handle_fetch_error)
+        worker.signals.api_errored.connect(self.handle_api_error)
+        worker.signals.request_errored.connect(self.handle_request_error)
 
         self.pool.start(worker)
+        self.fetch_status_label.setText(lo("app.status_fetching_weather"))
