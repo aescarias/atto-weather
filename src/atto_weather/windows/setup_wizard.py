@@ -369,7 +369,7 @@ class LocationManagePage(QWizardPage):
             QMessageBox.critical(
                 self,
                 lo("dialogs.location_manager.required_title"),
-                lo("dialogs.location_manager.required_message"),
+                lo("dialogs.location_manager.required_add_message"),
             )
 
     def _go_to_next_page(self) -> None:

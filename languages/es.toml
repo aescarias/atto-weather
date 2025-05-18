@@ -200,7 +200,8 @@ delete_button = "Eliminar"
 up_button = "Mover arriba"
 down_button = "Mover abajo"
 required_title = "Ubicación requrida"
-required_message = "Debe añadir al menos una ubicación antes de continuar."
+required_add_message = "Debe añadir al menos una ubicación antes de continuar."
+required_keep_message = "Debe mantener al menos una ubicación."
 
 [api_errors]
 error_format = "{message} (código: {code})"

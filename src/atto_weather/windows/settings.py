@@ -1,3 +1,4 @@
+import logging
 from functools import partial
 from typing import cast
 
@@ -30,6 +31,8 @@ from atto_weather.utils.settings import (
     SETTINGS_FIELDS,
     SelectUISetting,
 )
+
+LOGGER = logging.getLogger(__name__)
 
 
 class SettingsDialog(QDialog):
@@ -121,12 +124,24 @@ class GeneralTab(QWidget):
                 assert isinstance(value, str)
 
                 combobox = QComboBox()
+                config_name = field["options"].get(value)
+
+                if config_name is None:
+                    # invalid config value, set defaults
+                    default = DEFAULT_SETTINGS[setting]
+                    store.settings[setting] = default
+                    config_name = field["options"][default]
+
+                    LOGGER.warning(
+                        f"Invalid value set for {config_name!r}. Set to default {default!r}."
+                    )
+
                 if field.get("options_preloc", False):
                     combobox.addItems(list(field["options"].values()))
-                    combobox.setCurrentText(field["options"][value])
+                    combobox.setCurrentText(config_name)
                 else:
                     combobox.addItems(list(map(lo, field["options"].values())))
-                    combobox.setCurrentText(lo(field["options"][value]))
+                    combobox.setCurrentText(lo(config_name))
 
                 combobox.currentIndexChanged.connect(
                     partial(self.update_combobox, combobox, setting)

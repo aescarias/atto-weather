@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QObject, QPersistentModelIndex, Qt, Slot
-from PySide6.QtWidgets import QHBoxLayout, QListView, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QListView, QMessageBox, QPushButton, QVBoxLayout, QWidget
 from typing_extensions import TypeAlias
 
 from atto_weather.i18n import get_translation as lo
@@ -87,9 +87,18 @@ class LocationManager(QWidget):
         self.move_down_button.setDisabled(has_no_selection or met_down_bound)
 
     def delete_selected_item(self) -> None:
+        if self.locations_model.rowCount() <= 1:
+            QMessageBox.critical(
+                self,
+                lo("dialogs.location_manager.required_title"),
+                lo("dialogs.location_manager.required_keep_message"),
+            )
+            return
+
         row = self.locations_view.currentIndex().row()
 
         self.locations_model.locations.pop(row)
+        self.locations_model.layoutChanged.emit()
 
         store.settings["locations"] = self.locations_model.locations
         write_settings(store.settings)
